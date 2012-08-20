@@ -91,6 +91,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-container-test-impl-base</artifactId>
+                <version>${version.arquillian_core}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-transaction-api</artifactId>
                 <version>${project.version}</version>
