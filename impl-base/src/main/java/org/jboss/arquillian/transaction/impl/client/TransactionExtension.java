@@ -19,6 +19,7 @@ package org.jboss.arquillian.transaction.impl.client;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
 /**
  * Registers the extension.
@@ -35,6 +36,9 @@ public class TransactionExtension implements LoadableExtension {
 
         // registers the configuration producer
         builder.observer(TransactionConfigurationProducer.class);
+
+        // registers the transaction handler on the client side for embedded containers
+        builder.observer(TransactionHandler.class);
 
         // registers the archive builder
         builder.service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);

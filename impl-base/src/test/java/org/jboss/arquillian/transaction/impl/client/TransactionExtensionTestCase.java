@@ -19,6 +19,7 @@ package org.jboss.arquillian.transaction.impl.client;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,6 +71,7 @@ public class TransactionExtensionTestCase {
         instance.register(mockExtensionBuilder);
 
         verify(mockExtensionBuilder).observer(TransactionConfigurationProducer.class);
+        verify(mockExtensionBuilder).observer(TransactionHandler.class);
         verify(mockExtensionBuilder).service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
         verifyNoMoreInteractions(mockExtensionBuilder);
     }
