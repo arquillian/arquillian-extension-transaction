@@ -17,6 +17,9 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
+import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -79,6 +82,18 @@ public class TransactionHandler {
      */
     @Inject
     private Instance<TestResult> testResultInstance;
+
+    /**
+     * Represents the deployment.
+     */
+    @Inject
+    private Instance<Deployment> deploymentInstance;
+
+    /**
+     * Represents the container.
+     */
+    @Inject
+    private Instance<Container> containerInstance;
 
     /**
      * Initializes a transaction before execution of the test.
@@ -172,8 +187,16 @@ public class TransactionHandler {
      */
     private boolean isTransactionEnabled(TestEvent testEvent) {
 
-        return testEvent.getTestMethod().isAnnotationPresent(Transactional.class) ||
-                testEvent.getTestClass().isAnnotationPresent(Transactional.class);
+        boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(),
+                testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
+
+        boolean transactionSupported = !runAsClient || runAsClient && RunModeUtils.isLocalContainer(
+                containerInstance.get());
+
+        boolean transactionTest =  testEvent.getTestMethod().isAnnotationPresent(Transactional.class)
+                || testEvent.getTestClass().isAnnotationPresent(Transactional.class);
+
+        return transactionSupported && transactionTest;
     }
 
     /**
@@ -194,7 +217,8 @@ public class TransactionHandler {
 
     /**
      * Retrieves the transaction manager. The default implementation tries to first retrieve then transaction manager
-     * name from the annotation first on the method level then class. If non of above is
+     * name from the annotation first on the method level then class. If non of above condition is meet then is used
+     * the manager name provided through configuration.
      *
      * @param testEvent the test event
      *

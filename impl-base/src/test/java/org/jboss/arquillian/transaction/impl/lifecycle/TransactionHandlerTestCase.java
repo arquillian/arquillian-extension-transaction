@@ -18,6 +18,8 @@
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
 import junit.framework.TestCase;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -71,6 +73,18 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
     private ServiceLoader mockServiceLoader;
 
     /**
+     * Deployment.
+     */
+    @Mock
+    private Deployment mockDeployment;
+
+    /**
+     * Deployment descriptor.
+     */
+    @Mock
+    private DeploymentDescription mockDeploymentDescriptor;
+
+    /**
      * The configuration.
      */
     private TransactionConfiguration transactionConfiguration;
@@ -97,7 +111,12 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
         bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
         bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
+        bind(ApplicationScoped.class, Deployment.class, mockDeployment);
+
         when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
+        when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
+        when(mockDeployment.isDeployed()).thenReturn(true);
+        when(mockDeploymentDescriptor.testable()).thenReturn(true);
     }
 
     /**
