@@ -192,9 +192,9 @@ public class TransactionHandler {
 
         boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(),
                 testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
+        boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
 
-        boolean transactionSupported = !runAsClient || runAsClient && RunModeUtils.isLocalContainer(
-                containerInstance.get());
+        boolean transactionSupported = runAsClient || isLocal || (!runAsClient && isLocal);
 
         boolean transactionTest =  testEvent.getTestMethod().isAnnotationPresent(Transactional.class)
                 || testEvent.getTestClass().isAnnotationPresent(Transactional.class);

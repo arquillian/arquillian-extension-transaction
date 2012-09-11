@@ -17,11 +17,24 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Method;
+import java.util.List;
+
+import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -30,6 +43,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
+import org.jboss.arquillian.transaction.spi.event.BeforeTransactionStarted;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 import org.junit.Before;
@@ -37,14 +51,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests {@link TransactionHandler} class.
@@ -116,7 +124,7 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
         when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
         when(mockDeployment.isDeployed()).thenReturn(true);
-        when(mockDeploymentDescriptor.testable()).thenReturn(true);
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
     }
 
     /**
@@ -340,12 +348,77 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
+    @Test
+    public void shouldActivateTransactionWhenRunAsClient() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
+
+    @Test
+    public void shouldActivateTransactionWhenLocalProtocol() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(true);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+
+        Container container = Mockito.mock(Container.class);
+        DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
+        when(container.getDeployableContainer()).thenReturn(deployableContainer);
+        when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
+
+        bind(ApplicationScoped.class, Container.class, container);
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
+
+    @Test
+    public void shouldActivateTransactionWhenRunAsClientAndLocalProtocol() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+
+        Container container = Mockito.mock(Container.class);
+        DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
+        when(container.getDeployableContainer()).thenReturn(deployableContainer);
+        when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
+
+        bind(ApplicationScoped.class, Container.class, container);
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
+
+    @Test
+    public void shouldNotActivateTransactionWhenNotRunAsClientOnClientSide() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(true);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+
+        assertEventNotFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
+
     /**
      * Imitates a test case. Used for testing different conditions.
      *
      * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
      */
     @Transactional
+    @SuppressWarnings("unused")
     private static class TestClass {
 
         public void defaultTest() throws Exception {
@@ -378,6 +451,7 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
      * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
      */
     @Transactional(manager = "testCaseManager")
+    @SuppressWarnings("unused")
     private static class TestManagerClass {
 
         @Transactional(manager = "testMethodManager")
