@@ -38,15 +38,20 @@ import org.jboss.arquillian.transaction.spi.event.AfterTransactionStarted;
 import org.jboss.arquillian.transaction.spi.event.BeforeTransactionEnded;
 import org.jboss.arquillian.transaction.spi.event.BeforeTransactionStarted;
 import org.jboss.arquillian.transaction.spi.event.TransactionEvent;
+import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
 /**
- * The transaction life cycle handler, which is responsible for initializing new transactions before execution of the
- * test method and compensating it afterwards, based on the strategy defined by {@link Transactional} annotation. <p/>
- * The implementation delegates to registered {@link TransactionProvider} in the current context to perform actual
- * operation. If no provider has been found or multiple classes has been registered then {@link
- * TransactionProviderNotFoundException} is being thrown.
+ * The transaction life cycle handler, which is responsible for initializing new
+ * transactions before execution of the test method and compensating it
+ * afterwards, based on the strategy defined by {@link Transactional}
+ * annotation.
+ * <p/>
+ * The implementation delegates to registered {@link TransactionProvider} in the
+ * current context to perform actual operation. If no provider has been found or
+ * multiple classes has been registered then
+ * {@link TransactionProviderNotFoundException} is being thrown.
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
@@ -56,8 +61,8 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 public class TransactionHandler {
 
     /**
-     * Instance of {@link ServiceLoader}, used for retrieving the {@link TransactionProvider} registered in the
-     * context.
+     * Instance of {@link ServiceLoader}, used for retrieving
+     * required SPIs registered in the context.
      */
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
@@ -105,22 +110,18 @@ public class TransactionHandler {
      */
     public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest) {
 
-        TransactionProvider transactionProvider;
-
         if (isTransactionEnabled(beforeTest)) {
 
             TransactionMode transactionMode = getTransactionMode(beforeTest);
 
             if (transactionMode != TransactionMode.DISABLED) {
-                transactionProvider = getTransactionProvider();
-
                 // creates the transaction context
                 TransactionContext transactionContext = transactionContextInstance.get();
                 transactionContext.activate();
 
                 lifecycleEvent.fire(new BeforeTransactionStarted());
 
-                transactionProvider.beginTransaction(new TransactionalTestImpl(getTransactionManager(beforeTest)));
+                getTransactionProvider().beginTransaction(new TransactionalTestImpl(getTransactionManager(beforeTest)));
 
                 lifecycleEvent.fire(new AfterTransactionStarted());
             }
@@ -134,8 +135,6 @@ public class TransactionHandler {
      */
     public void endTransactionAfterTest(@Observes(precedence = 50) After afterTest) {
 
-        TransactionProvider transactionProvider;
-
         if (isTransactionEnabled(afterTest)) {
 
             // retrieves the transaction mode, declared for the test method
@@ -145,16 +144,13 @@ public class TransactionHandler {
                 try {
                     lifecycleEvent.fire(new BeforeTransactionEnded());
 
-                    transactionProvider = getTransactionProvider();
+                    TransactionProvider transactionProvider = getTransactionProvider();
 
-                    TransactionalTest transactionalTest =
-                            new TransactionalTestImpl(getTransactionManager(afterTest));
+                    TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
 
                     if (transactionMode == TransactionMode.ROLLBACK || isTestRequiresRollback()) {
-                        // rollbacks the transaction
                         transactionProvider.rollbackTransaction(transactionalTest);
                     } else {
-                        // commits the transaction
                         transactionProvider.commitTransaction(transactionalTest);
                     }
 
@@ -169,10 +165,11 @@ public class TransactionHandler {
         }
     }
 
+    // -- Private methods
+
     /**
-     * Returns whether the test requires to be rollback.
-     * </p>
-     * By default it will return true if the last executed test has failed.
+     * Returns whether the test requires to be rollback. </p> By default it will
+     * return true if the last executed test has failed.
      *
      * @return true if test requires rollback, false otherwise
      */
@@ -189,17 +186,8 @@ public class TransactionHandler {
      * @return true if the transaction support has been enabled, false otherwise
      */
     private boolean isTransactionEnabled(TestEvent testEvent) {
-
-        boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(),
-                testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
-        boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
-
-        boolean transactionSupported = runAsClient || isLocal || (!runAsClient && isLocal);
-
-        boolean transactionTest =  testEvent.getTestMethod().isAnnotationPresent(Transactional.class)
-                || testEvent.getTestClass().isAnnotationPresent(Transactional.class);
-
-        return transactionSupported && transactionTest;
+        final TransactionEnablerLoader transactionEnablerLoader = new TransactionEnablerLoader(serviceLoaderInstance.get(), deploymentInstance.get(), containerInstance.get());
+        return transactionEnablerLoader.getTransactionEnabler().isTransactionEnabled(testEvent);
     }
 
     /**
@@ -219,9 +207,10 @@ public class TransactionHandler {
     }
 
     /**
-     * Retrieves the transaction manager. The default implementation tries to first retrieve then transaction manager
-     * name from the annotation first on the method level then class. If non of above condition is meet then is used
-     * the manager name provided through configuration.
+     * Retrieves the transaction manager. The default implementation tries to
+     * first retrieve then transaction manager name from the annotation first on
+     * the method level then class. If non of above condition is meet then is
+     * used the manager name provided through configuration.
      *
      * @param testEvent the test event
      *
@@ -238,7 +227,8 @@ public class TransactionHandler {
             transactionManager = transactional.manager();
         }
 
-        // if the transaction manager name hasn't been set then tries to retrieve it from class level annotation
+        // if the transaction manager name hasn't been set then tries to
+        // retrieve it from class level annotation
         if (transactionManager.length() == 0) {
             transactional = testEvent.getTestClass().getAnnotation(Transactional.class);
             if (transactional != null) {
@@ -246,7 +236,8 @@ public class TransactionHandler {
             }
         }
 
-        // if the transaction manager name still hasn't been set then tries to get the manager from the configuration
+        // if the transaction manager name still hasn't been set then tries to
+        // get the manager from the configuration
         if (transactionManager.length() == 0) {
 
             if (configurationInstance.get().getManager() != null) {
@@ -258,15 +249,14 @@ public class TransactionHandler {
     }
 
     /**
-     * Retrieves the {@link Transactional} from the test method or class that was used for configuring the transaction
-     * support.
+     * Retrieves the {@link Transactional} from the test method or class that
+     * was used for configuring the transaction support.
      *
      * @param testEvent the test event
      *
      * @return the {@link Transactional} annotation
      */
     private Transactional getTransactionalAnnotation(TestEvent testEvent) {
-
         if (testEvent.getTestMethod().isAnnotationPresent(Transactional.class)) {
             return testEvent.getTestMethod().getAnnotation(Transactional.class);
         } else {
@@ -280,25 +270,23 @@ public class TransactionHandler {
      * @return the transaction provider
      *
      * @throws TransactionProviderNotFoundException
-     *          if no provider could be found or there are multiple providers registered.
+     *             if no provider could be found or there are multiple providers registered.
      */
     private TransactionProvider getTransactionProvider() {
 
         try {
-            ServiceLoader serviceLoader = serviceLoaderInstance.get();
+            final ServiceLoader serviceLoader = serviceLoaderInstance.get();
 
-            TransactionProvider transactionProvider = serviceLoader.onlyOne(TransactionProvider.class);
+            final TransactionProvider transactionProvider = serviceLoader.onlyOne(TransactionProvider.class);
 
             if (transactionProvider == null) {
-                throw new TransactionProviderNotFoundException(
-                        "Transaction provider for given test case has not been found.");
+                throw new TransactionProviderNotFoundException("Transaction provider for given test case has not been found.");
             }
-
             return transactionProvider;
-        } catch (IllegalStateException exc) {
+        } catch (IllegalStateException e) {
             // thrown if there were multiple providers registered in the context
-            throw new TransactionProviderNotFoundException(
-                    "More then one transaction provider has been specified.", exc);
+            throw new TransactionProviderNotFoundException("More then one transaction provider has been specified.", e);
         }
     }
+
 }
