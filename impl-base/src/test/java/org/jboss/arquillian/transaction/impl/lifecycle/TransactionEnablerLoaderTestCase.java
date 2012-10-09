@@ -79,7 +79,7 @@ public class TransactionEnablerLoaderTestCase {
         TransactionEnabler transactionEnabler = transactionEnablerLoader.getTransactionEnabler();
 
         // then
-        Assert.assertTrue(transactionEnabler instanceof DefaultTransactionEnabler);
+        Assert.assertTrue(transactionEnabler instanceof AnnotationBasedTransactionEnabler);
 
     }
 

@@ -23,13 +23,13 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 
-public class DefaultTransactionEnabler implements TransactionEnabler {
+public class AnnotationBasedTransactionEnabler implements TransactionEnabler {
 
     private final Deployment deployment;
 
     private final Container container;
 
-    public DefaultTransactionEnabler(Deployment deployment, Container container) {
+    public AnnotationBasedTransactionEnabler(Deployment deployment, Container container) {
         this.deployment = deployment;
         this.container = container;
     }

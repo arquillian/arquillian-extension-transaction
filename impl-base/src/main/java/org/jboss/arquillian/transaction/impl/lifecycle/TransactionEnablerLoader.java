@@ -24,12 +24,12 @@ import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 public class TransactionEnablerLoader {
 
     private final ServiceLoader serviceLoader;
-    private final DefaultTransactionEnabler defaultTransactionEnabler;
+    private final AnnotationBasedTransactionEnabler defaultTransactionEnabler;
 
 
     public TransactionEnablerLoader(ServiceLoader serviceLoader, Deployment deployment, Container container) {
         this.serviceLoader = serviceLoader;
-        this.defaultTransactionEnabler = new DefaultTransactionEnabler(deployment, container);
+        this.defaultTransactionEnabler = new AnnotationBasedTransactionEnabler(deployment, container);
     }
 
 
