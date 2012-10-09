@@ -44,7 +44,9 @@ import org.mockito.stubbing.Answer;
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionEnablerLoaderTestCase {
 
-    private static final String TRANSACTION_ENABLER_SPI_RESOURCE = "src/test/resources/META-INF/services/org.jboss.arquillian.transaction.spi.provider.TransactionEnabler";
+    private static final String TEST_SPI_FOLDER = "src/test/resources/META-INF/services/";
+
+    private static final String TRANSACTION_ENABLER_SPI_RESOURCE = TEST_SPI_FOLDER + "org.jboss.arquillian.transaction.spi.provider.TransactionEnabler";
 
     @Mock
     private ServiceLoader mockServiceLoader;
@@ -95,16 +97,20 @@ public class TransactionEnablerLoaderTestCase {
             // then
             Assert.assertTrue(transactionEnabler instanceof CustomTransactionEnabler);
         } finally {
-            spiEntry.deleteOnExit();
+            spiEntry.delete();
         }
 
     }
 
     private File createSPIEntry(final String customImplementation) throws IOException {
+        final File spiDirectory = new File(TEST_SPI_FOLDER);
+        spiDirectory.mkdirs();
+
         final File file = new File(TRANSACTION_ENABLER_SPI_RESOURCE);
         FileWriter spiEntry = new FileWriter(file);
         spiEntry.write(customImplementation);
         spiEntry.close();
+
         return file;
     }
 
