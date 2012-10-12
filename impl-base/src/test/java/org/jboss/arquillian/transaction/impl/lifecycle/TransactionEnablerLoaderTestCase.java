@@ -17,17 +17,18 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
-import junit.framework.Assert;
-
-import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 import org.junit.Before;
@@ -46,43 +47,49 @@ public class TransactionEnablerLoaderTestCase {
 
     private static final String TEST_SPI_FOLDER = "src/test/resources/META-INF/services/";
 
-    private static final String TRANSACTION_ENABLER_SPI_RESOURCE = TEST_SPI_FOLDER + "org.jboss.arquillian.transaction.spi.provider.TransactionEnabler";
+    private List<String> spiResources;
 
     @Mock
     private ServiceLoader mockServiceLoader;
-
-    @Mock
-    private Deployment mockDeployment;
-
-    @Mock
-    private Container mockContainer;
 
     TransactionEnablerLoader transactionEnablerLoader;
 
     @Before
     public void initializeLoader() {
-        when(mockServiceLoader.onlyOne(TransactionEnabler.class)).thenAnswer(new Answer<TransactionEnabler>() {
+        spiResources = new ArrayList<String>();
+        when(mockServiceLoader.all(TransactionEnabler.class)).thenAnswer(new Answer<Collection<TransactionEnabler>>() {
+
             @Override
-            public TransactionEnabler answer(InvocationOnMock invocation) throws Throwable {
-                final File spiFile = new File(TRANSACTION_ENABLER_SPI_RESOURCE);
+            public Collection<TransactionEnabler> answer(InvocationOnMock invocation) throws Throwable {
+                final Collection<TransactionEnabler> results = new ArrayList<TransactionEnabler>();
+                for (String spiResource : spiResources) {
+                    results.add(loadSpi(spiResource));
+                }
+                return results;
+            }
+
+            private TransactionEnabler loadSpi(final String transactionEnablerSpiResource)
+                    throws FileNotFoundException, InstantiationException, IllegalAccessException,
+                    ClassNotFoundException {
+                final File spiFile = new File(transactionEnablerSpiResource);
                 if (!spiFile.exists()) {
                     return null;
                 }
                 final String spiImplementation = new Scanner(spiFile).useDelimiter("\\A").next();
-                return (TransactionEnabler) Class.forName(spiImplementation).newInstance();
+                TransactionEnabler transactionEnabler = (TransactionEnabler) Class.forName(spiImplementation).newInstance();
+                return transactionEnabler;
             }
         });
-        transactionEnablerLoader = new TransactionEnablerLoader(mockServiceLoader, mockDeployment, mockContainer);
+        transactionEnablerLoader = new TransactionEnablerLoader(mockServiceLoader);
     }
 
     @Test
     public void shouldUseDefaultImplementationWhenNoAlternateDefinedThroughSpi() throws Exception {
         // when
-        TransactionEnabler transactionEnabler = transactionEnablerLoader.getTransactionEnabler();
+        Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
 
         // then
-        Assert.assertTrue(transactionEnabler instanceof AnnotationBasedTransactionEnabler);
-
+        assertThat(transformToClasses(transactionEnablers)).containsOnly(AnnotationBasedTransactionEnabler.class);
     }
 
     @Test
@@ -92,26 +99,41 @@ public class TransactionEnablerLoaderTestCase {
 
         try {
             // when
-            TransactionEnabler transactionEnabler = transactionEnablerLoader.getTransactionEnabler();
+            Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
 
             // then
-            Assert.assertTrue(transactionEnabler instanceof CustomTransactionEnabler);
+            assertThat(transformToClasses(transactionEnablers)).containsExactly(AnnotationBasedTransactionEnabler.class, CustomTransactionEnabler.class);
         } finally {
             spiEntry.delete();
         }
 
     }
 
+    // -- Test helpers
+
     private File createSPIEntry(final String customImplementation) throws IOException {
+
+        final String resource = TEST_SPI_FOLDER + customImplementation;
+        spiResources.add(resource);
+
         final File spiDirectory = new File(TEST_SPI_FOLDER);
         spiDirectory.mkdirs();
-
-        final File file = new File(TRANSACTION_ENABLER_SPI_RESOURCE);
+        final File file = new File(resource);
         FileWriter spiEntry = new FileWriter(file);
         spiEntry.write(customImplementation);
         spiEntry.close();
 
         return file;
+    }
+
+    // -- Testing helpers
+
+    private List<Class<?>> transformToClasses(Collection<TransactionEnabler> transactionEnablers) {
+        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        for (TransactionEnabler enabler : transactionEnablers) {
+            classes.add(enabler.getClass());
+        }
+        return classes;
     }
 
 }

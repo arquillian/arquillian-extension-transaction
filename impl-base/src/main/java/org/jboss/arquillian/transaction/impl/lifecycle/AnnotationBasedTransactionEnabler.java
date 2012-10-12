@@ -17,34 +17,41 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 
+
+/**
+ * Resolves transactional support based on core annotation
+ * based model
+ *
+ * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
+ *
+ * @see Transactional
+ * @see TransactionEnabler
+ */
 public class AnnotationBasedTransactionEnabler implements TransactionEnabler {
 
-    private final Deployment deployment;
-
-    private final Container container;
-
-    public AnnotationBasedTransactionEnabler(Deployment deployment, Container container) {
-        this.deployment = deployment;
-        this.container = container;
+    @Override
+    public boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().isAnnotationPresent(Transactional.class);
     }
 
     @Override
-    public boolean isTransactionEnabled(TestEvent testEvent) {
-        boolean runAsClient = RunModeUtils.isRunAsClient(deployment, testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
-        boolean isLocal = RunModeUtils.isLocalContainer(container);
+    public boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().isAnnotationPresent(Transactional.class);
+    }
 
-        boolean transactionSupported = runAsClient || isLocal || (!runAsClient && isLocal);
+    @Override
+    public TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().getAnnotation(Transactional.class).value();
+    }
 
-        boolean transactionTest = testEvent.getTestMethod().isAnnotationPresent(Transactional.class)
-                || testEvent.getTestClass().isAnnotationPresent(Transactional.class);
-
-        return transactionSupported && transactionTest;
+    @Override
+    public TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().getAnnotation(Transactional.class).value();
     }
 
 }

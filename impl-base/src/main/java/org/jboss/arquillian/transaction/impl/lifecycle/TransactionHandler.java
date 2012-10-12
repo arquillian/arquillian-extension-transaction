@@ -25,6 +25,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
@@ -67,116 +68,64 @@ public class TransactionHandler {
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
 
-    /**
-     * The transaction configuration.
-     */
     @Inject
     private Instance<TransactionConfiguration> configurationInstance;
 
-    /**
-     * Transaction lifecycle event.
-     */
     @Inject
     Event<TransactionEvent> lifecycleEvent;
 
-    /**
-     * The context bound to the current transaction.
-     */
     @Inject
     private Instance<TransactionContext> transactionContextInstance;
 
-    /**
-     * The instance of the test result.
-     */
     @Inject
     private Instance<TestResult> testResultInstance;
 
-    /**
-     * Represents the deployment.
-     */
     @Inject
     private Instance<Deployment> deploymentInstance;
 
-    /**
-     * Represents the container.
-     */
     @Inject
     private Instance<Container> containerInstance;
 
-    /**
-     * Initializes a transaction before execution of the test.
-     *
-     * @param beforeTest the test event
-     */
     public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest) {
 
         if (isTransactionEnabled(beforeTest)) {
 
-            TransactionMode transactionMode = getTransactionMode(beforeTest);
+            TransactionContext transactionContext = transactionContextInstance.get();
+            transactionContext.activate();
 
-            if (transactionMode != TransactionMode.DISABLED) {
-                // creates the transaction context
-                TransactionContext transactionContext = transactionContextInstance.get();
-                transactionContext.activate();
+            lifecycleEvent.fire(new BeforeTransactionStarted());
 
-                lifecycleEvent.fire(new BeforeTransactionStarted());
+            getTransactionProvider().beginTransaction(new TransactionalTestImpl(getTransactionManager(beforeTest)));
 
-                getTransactionProvider().beginTransaction(new TransactionalTestImpl(getTransactionManager(beforeTest)));
-
-                lifecycleEvent.fire(new AfterTransactionStarted());
-            }
+            lifecycleEvent.fire(new AfterTransactionStarted());
         }
     }
 
-    /**
-     * Compensates the transaction after execution of the test.
-     *
-     * @param afterTest the test event
-     */
     public void endTransactionAfterTest(@Observes(precedence = 50) After afterTest) {
 
         if (isTransactionEnabled(afterTest)) {
 
-            // retrieves the transaction mode, declared for the test method
-            TransactionMode transactionMode = getTransactionMode(afterTest);
+            try {
+                lifecycleEvent.fire(new BeforeTransactionEnded());
 
-            if (transactionMode != TransactionMode.DISABLED) {
-                try {
-                    lifecycleEvent.fire(new BeforeTransactionEnded());
+                TransactionProvider transactionProvider = getTransactionProvider();
+                TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
 
-                    TransactionProvider transactionProvider = getTransactionProvider();
-
-                    TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
-
-                    if (transactionMode == TransactionMode.ROLLBACK || isTestRequiresRollback()) {
-                        transactionProvider.rollbackTransaction(transactionalTest);
-                    } else {
-                        transactionProvider.commitTransaction(transactionalTest);
-                    }
-
-                } finally {
-                    lifecycleEvent.fire(new AfterTransactionEnded());
-
-                    // finally destroys the transaction context
-                    TransactionContext transactionContext = transactionContextInstance.get();
-                    transactionContext.destroy();
+                if (rollbackRequired(afterTest)) {
+                    transactionProvider.rollbackTransaction(transactionalTest);
+                } else {
+                    transactionProvider.commitTransaction(transactionalTest);
                 }
+
+            } finally {
+                lifecycleEvent.fire(new AfterTransactionEnded());
+                transactionContextInstance.get().destroy();
             }
         }
     }
 
     // -- Private methods
 
-    /**
-     * Returns whether the test requires to be rollback. </p> By default it will
-     * return true if the last executed test has failed.
-     *
-     * @return true if test requires rollback, false otherwise
-     */
-    private boolean isTestRequiresRollback() {
-
-        return testResultInstance.get().getStatus() == TestResult.Status.FAILED;
-    }
 
     /**
      * Returns whether the transaction is enabled for the current test.
@@ -186,8 +135,35 @@ public class TransactionHandler {
      * @return true if the transaction support has been enabled, false otherwise
      */
     private boolean isTransactionEnabled(TestEvent testEvent) {
-        final TransactionEnablerLoader transactionEnablerLoader = new TransactionEnablerLoader(serviceLoaderInstance.get(), deploymentInstance.get(), containerInstance.get());
-        return transactionEnablerLoader.getTransactionEnabler().isTransactionEnabled(testEvent);
+        if (!isTransactionSupported(testEvent)) {
+            return false;
+        }
+
+        final TransactionMode transactionMode = getTransactionMode(testEvent);
+        return transactionMode != null && !TransactionMode.DISABLED.equals(transactionMode);
+    }
+
+    private boolean isTransactionSupported(TestEvent testEvent) {
+        boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(), testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
+        boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
+
+        return runAsClient || isLocal || (!runAsClient && isLocal);
+    }
+
+
+    private boolean rollbackRequired(TestEvent testEvent) {
+        return testRequiresRollbackDueToFailure() || TransactionMode.ROLLBACK.equals(getTransactionMode(testEvent));
+    }
+
+    /**
+     * Returns whether the test requires to be rolled back. </p>
+     * By default it will return true if the last executed test has failed.
+     *
+     * @return true if test requires rollback, false otherwise
+     */
+    private boolean testRequiresRollbackDueToFailure() {
+        final Status actualStatus = testResultInstance.get().getStatus();
+        return TestResult.Status.FAILED.equals(actualStatus);
     }
 
     /**
@@ -198,12 +174,22 @@ public class TransactionHandler {
      * @return the transaction mode
      */
     private TransactionMode getTransactionMode(TestEvent testEvent) {
+        TransactionMode methodLevel = null;
+        TransactionMode classLevel = null;
+        final TransactionEnablerLoader transactionEnablerLoader = new TransactionEnablerLoader(serviceLoaderInstance.get());
+        for (TransactionEnabler enabler : transactionEnablerLoader.getTransactionEnablers()) {
+            if (methodLevel == null && enabler.isTransactionHandlingDefinedOnMethodLevel(testEvent)) {
+                methodLevel = enabler.getTransactionModeFromMethodLevel(testEvent);
+            }
 
-        // retrieves the transaction annotation
-        Transactional transactional = getTransactionalAnnotation(testEvent);
-
-        // returns the transaction mode
-        return transactional.value();
+            if (classLevel == null && enabler.isTransactionHandlingDefinedOnClassLevel(testEvent)) {
+                classLevel = enabler.getTransactionModeFromClassLevel(testEvent);
+            }
+        }
+        if (methodLevel != null) {
+            return methodLevel;
+        }
+        return classLevel;
     }
 
     /**
@@ -236,32 +222,18 @@ public class TransactionHandler {
             }
         }
 
-        // if the transaction manager name still hasn't been set then tries to
-        // get the manager from the configuration
         if (transactionManager.length() == 0) {
-
-            if (configurationInstance.get().getManager() != null) {
-                transactionManager = configurationInstance.get().getManager();
-            }
+            transactionManager = obtainTranscationManagerFromConfiguration(transactionManager);
         }
 
         return transactionManager.length() != 0 ? transactionManager : null;
     }
 
-    /**
-     * Retrieves the {@link Transactional} from the test method or class that
-     * was used for configuring the transaction support.
-     *
-     * @param testEvent the test event
-     *
-     * @return the {@link Transactional} annotation
-     */
-    private Transactional getTransactionalAnnotation(TestEvent testEvent) {
-        if (testEvent.getTestMethod().isAnnotationPresent(Transactional.class)) {
-            return testEvent.getTestMethod().getAnnotation(Transactional.class);
-        } else {
-            return testEvent.getTestClass().getAnnotation(Transactional.class);
+    private String obtainTranscationManagerFromConfiguration(String transactionManager) {
+        if (configurationInstance.get().getManager() != null) {
+            transactionManager = configurationInstance.get().getManager();
         }
+        return transactionManager;
     }
 
     /**
@@ -273,18 +245,13 @@ public class TransactionHandler {
      *             if no provider could be found or there are multiple providers registered.
      */
     private TransactionProvider getTransactionProvider() {
-
         try {
-            final ServiceLoader serviceLoader = serviceLoaderInstance.get();
-
-            final TransactionProvider transactionProvider = serviceLoader.onlyOne(TransactionProvider.class);
-
+            final TransactionProvider transactionProvider = serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
             if (transactionProvider == null) {
                 throw new TransactionProviderNotFoundException("Transaction provider for given test case has not been found.");
             }
             return transactionProvider;
         } catch (IllegalStateException e) {
-            // thrown if there were multiple providers registered in the context
             throw new TransactionProviderNotFoundException("More then one transaction provider has been specified.", e);
         }
     }

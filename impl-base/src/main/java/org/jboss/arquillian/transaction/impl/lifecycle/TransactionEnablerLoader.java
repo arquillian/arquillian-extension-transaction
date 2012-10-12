@@ -16,39 +16,36 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 
+/**
+ *
+ * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
+ *
+ */
 public class TransactionEnablerLoader {
 
     private final ServiceLoader serviceLoader;
-    private final AnnotationBasedTransactionEnabler defaultTransactionEnabler;
 
-
-    public TransactionEnablerLoader(ServiceLoader serviceLoader, Deployment deployment, Container container) {
+    public TransactionEnablerLoader(ServiceLoader serviceLoader) {
         this.serviceLoader = serviceLoader;
-        this.defaultTransactionEnabler = new AnnotationBasedTransactionEnabler(deployment, container);
     }
 
-
     /**
-     * Finds custom implementation of {@link TransactionEnabler} SPI or returns default one if there is none on the classpath.
+     * Finds custom implementations of {@link TransactionEnabler} SPI
+     * including the default one which will be first on the list.
+     *
      * @return
      */
-    public TransactionEnabler getTransactionEnabler() {
-        try {
-            TransactionEnabler transactionEnabler = serviceLoader.onlyOne(TransactionEnabler.class);
-
-            if (transactionEnabler == null) {
-                transactionEnabler = defaultTransactionEnabler;
-            }
-
-            return transactionEnabler;
-        } catch (IllegalStateException e) {
-            throw new TransactionProviderNotFoundException("More then one transaction enabler implementation has been found on the classpath.", e);
-        }
+    public List<TransactionEnabler> getTransactionEnablers() {
+        List<TransactionEnabler> transactionEnablers = new ArrayList<TransactionEnabler>();
+        transactionEnablers.add(new AnnotationBasedTransactionEnabler());
+        transactionEnablers.addAll(serviceLoader.all(TransactionEnabler.class));
+        return transactionEnablers;
     }
 
 }
