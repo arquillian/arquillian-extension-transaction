@@ -21,11 +21,12 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 
 /**
- * Implementing this interface allows alter strategy for determining
+ * Implementing this interface allows customize strategy for determining
  * if transaction should be enabled for given test.
  *
- * This mechanism is intended to handle multiple implementations (through the chain),
- * however it will always use the default one {@see org.jboss.arquillian.transaction.impl.lifecycle.AnnotationBasedTransactionEnabler}
+ * This mechanism is intended to handle multiple implementations.
+ * It's realized through the chain call, however order is not guaranteed.
+ * It will always use the default one {@see org.jboss.arquillian.transaction.impl.lifecycle.AnnotationBasedTransactionEnabler}
  * as the precedent.
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>

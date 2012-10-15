@@ -24,8 +24,8 @@ import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 
 
 /**
- * Resolves transactional support based on core annotation
- * based model
+ * Resolves transactional support using annotation
+ * based model.
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  *
