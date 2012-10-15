@@ -33,6 +33,21 @@
     <!-- Dependencies -->
     <dependencies>
 
+				<!-- Transaction extension -->
+				
+				<dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+				
         <!-- Arquillian Core -->
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -50,17 +65,7 @@
             <groupId>org.jboss.arquillian.test</groupId>
             <artifactId>arquillian-test-spi</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-transaction-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-transaction-spi</artifactId>
-        </dependency>
-
+        
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>

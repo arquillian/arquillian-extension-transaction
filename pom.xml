@@ -30,7 +30,7 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
+        <version.arquillian_core>1.0.2.Final</version.arquillian_core>
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
@@ -48,6 +48,7 @@
         <module>api</module>
         <module>spi</module>
         <module>impl-base</module>
+        <module>impl-jta</module>
         <module>bom</module>
     </modules>
 
