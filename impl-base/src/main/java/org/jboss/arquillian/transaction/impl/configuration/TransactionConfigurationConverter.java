@@ -19,8 +19,10 @@
 package org.jboss.arquillian.transaction.impl.configuration;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -39,9 +41,10 @@ public class TransactionConfigurationConverter {
      */
     public static String exportToProperties(TransactionConfiguration configuration) {
 
+        OutputStream outputStream = null;
         try {
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            outputStream = new ByteArrayOutputStream();
 
             Properties properties = new Properties();
             setPropertyValue(properties, "manager", configuration.getManager());
@@ -49,9 +52,9 @@ public class TransactionConfigurationConverter {
 
             return outputStream.toString();
         } catch (IOException e) {
-
             throw new RuntimeException("Could not export the configuration..", e);
-
+        } finally {
+            close(outputStream);
         }
     }
 
@@ -60,7 +63,7 @@ public class TransactionConfigurationConverter {
      *
      * @param inputStream the input stream
      */
-    public static TransactionConfiguration importFromProperties(InputStream inputStream) {
+    public static TransactionConfiguration importFromProperties(final InputStream inputStream) {
 
         try {
 
@@ -71,8 +74,9 @@ public class TransactionConfigurationConverter {
             transactionConfiguration.setManager(getPropertyValue(properties, "manager"));
             return transactionConfiguration;
         } catch (IOException e) {
-
             throw new RuntimeException("Could not import the configuration.", e);
+        } finally {
+            close(inputStream);
         }
     }
 
@@ -116,5 +120,15 @@ public class TransactionConfigurationConverter {
      */
     private static String getPropertyValueOrDefault(String value) {
         return value != null ? value : "";
+    }
+
+    private static void close(final Closeable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to close output stream.", e);
+            }
+        }
     }
 }
