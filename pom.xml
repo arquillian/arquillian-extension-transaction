@@ -30,10 +30,11 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
+        <version.arquillian_core>1.0.2.Final</version.arquillian_core>
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
+        <version.fest.assert>1.4</version.fest.assert>
         <version.mockito>1.9.0</version.mockito>
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
@@ -48,6 +49,7 @@
         <module>api</module>
         <module>spi</module>
         <module>impl-base</module>
+        <module>impl-jta</module>
         <module>bom</module>
     </modules>
 
@@ -111,7 +113,8 @@
                 <artifactId>arquillian-transaction-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            
+						<!-- Testing libraries -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -125,6 +128,13 @@
                 <version>${version.mockito}</version>
                 <scope>test</scope>
             </dependency>
+            
+            <dependency>
+								<groupId>org.easytesting</groupId>
+								<artifactId>fest-assert</artifactId>
+								<version>${version.fest.assert}</version>
+								<scope>test</scope>
+						</dependency>
 
         </dependencies>
     </dependencyManagement>
