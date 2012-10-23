@@ -20,7 +20,7 @@ package org.jboss.arquillian.transaction.spi.provider;
 import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
 /**
- * Transaction provider. The concrete implementation of this interface will responsible for
+ * Transaction provider. The concrete implementation of this interface will be responsible for
  * creating and compensating transactions for executing test method.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
