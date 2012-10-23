@@ -20,14 +20,10 @@ package org.jboss.arquillian.transaction.impl.lifecycle;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Scanner;
 
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
@@ -35,9 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
@@ -45,41 +39,13 @@ import org.mockito.stubbing.Answer;
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionEnablerLoaderTestCase {
 
-    private static final String TEST_SPI_FOLDER = "src/test/resources/META-INF/services/";
-
-    private List<String> spiResources;
-
     @Mock
     private ServiceLoader mockServiceLoader;
 
     TransactionEnablerLoader transactionEnablerLoader;
 
     @Before
-    public void initializeLoader() {
-        spiResources = new ArrayList<String>();
-        when(mockServiceLoader.all(TransactionEnabler.class)).thenAnswer(new Answer<Collection<TransactionEnabler>>() {
-
-            @Override
-            public Collection<TransactionEnabler> answer(InvocationOnMock invocation) throws Throwable {
-                final Collection<TransactionEnabler> results = new ArrayList<TransactionEnabler>();
-                for (String spiResource : spiResources) {
-                    results.add(loadSpi(spiResource));
-                }
-                return results;
-            }
-
-            private TransactionEnabler loadSpi(final String transactionEnablerSpiResource)
-                    throws FileNotFoundException, InstantiationException, IllegalAccessException,
-                    ClassNotFoundException {
-                final File spiFile = new File(transactionEnablerSpiResource);
-                if (!spiFile.exists()) {
-                    return null;
-                }
-                final String spiImplementation = new Scanner(spiFile).useDelimiter("\\A").next();
-                TransactionEnabler transactionEnabler = (TransactionEnabler) Class.forName(spiImplementation).newInstance();
-                return transactionEnabler;
-            }
-        });
+    public void initialize() {
         transactionEnablerLoader = new TransactionEnablerLoader(mockServiceLoader);
     }
 
@@ -95,38 +61,17 @@ public class TransactionEnablerLoaderTestCase {
     @Test
     public void shouldResolveCustomTransactionEnablerWhenDefinedThroughSpi() throws Exception {
         // given
-        final File spiEntry = createSPIEntry("org.jboss.arquillian.transaction.impl.lifecycle.CustomTransactionEnabler");
+        when(mockServiceLoader.all(TransactionEnabler.class)).thenReturn(Arrays.<TransactionEnabler>asList(new CustomTransactionEnabler()));
 
-        try {
-            // when
-            Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
+        // when
+        Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
 
-            // then
-            assertThat(transformToClasses(transactionEnablers)).containsExactly(AnnotationBasedTransactionEnabler.class, CustomTransactionEnabler.class);
-        } finally {
-            spiEntry.delete();
-        }
+        // then
+        assertThat(transformToClasses(transactionEnablers)).containsExactly(AnnotationBasedTransactionEnabler.class, CustomTransactionEnabler.class);
 
     }
 
     // -- Test helpers
-
-    private File createSPIEntry(final String customImplementation) throws IOException {
-
-        final String resource = TEST_SPI_FOLDER + customImplementation;
-        spiResources.add(resource);
-
-        final File spiDirectory = new File(TEST_SPI_FOLDER);
-        spiDirectory.mkdirs();
-        final File file = new File(resource);
-        FileWriter spiEntry = new FileWriter(file);
-        spiEntry.write(customImplementation);
-        spiEntry.close();
-
-        return file;
-    }
-
-    // -- Testing helpers
 
     private List<Class<?>> transformToClasses(Collection<TransactionEnabler> transactionEnablers) {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
