@@ -18,6 +18,7 @@
 
 package org.jboss.arquillian.transaction.impl.configuration;
 
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.test.TransactionalTestImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,5 +60,10 @@ public class TransactionConfigurationTestCase {
         instance.setManager(manager);
 
         assertEquals("Invalid property value.", manager, instance.getManager());
+    }
+
+    @Test
+    public void shouldHaveDefaultTransactionModeSetToCommitIfNotSpecifiedOtherwise() {
+        assertEquals("Expecting COMMIT value.", TransactionMode.COMMIT, instance.getTransactionDefaultMode());
     }
 }

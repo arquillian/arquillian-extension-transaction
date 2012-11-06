@@ -18,10 +18,13 @@
 
 package org.jboss.arquillian.transaction.impl.configuration;
 
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+
 /**
  * The transaction extension configuration.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+ * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
 public class TransactionConfiguration {
 
@@ -31,27 +34,31 @@ public class TransactionConfiguration {
     private String manager;
 
     /**
+     * Default mode used (COMMIT) for tests if not specified otherwise using annotation.
+     */
+    private TransactionMode transactionDefaultMode = TransactionMode.COMMIT;
+
+    /**
      * Creates new instance of {@link TransactionConfiguration} class.
      */
     public TransactionConfiguration() {
         // empty constructor
     }
 
-    /**
-     * Retrieves the manager name.
-     *
-     * @return the manager name
-     */
     public String getManager() {
         return manager;
     }
 
-    /**
-     * Sets the manager name.
-     *
-     * @param manager the manager name
-     */
     public void setManager(String manager) {
         this.manager = manager;
     }
+
+    public TransactionMode getTransactionDefaultMode() {
+        return transactionDefaultMode;
+    }
+
+    public void setTransactionDefaultMode(TransactionMode transactionDefaultMode) {
+        this.transactionDefaultMode = transactionDefaultMode;
+    }
+
 }

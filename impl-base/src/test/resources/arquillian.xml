@@ -7,5 +7,6 @@
 
     <extension qualifier="transaction">
         <property name="manager">testManagerName</property>
+        <property name="transactionDefaultMode">DISABLED</property>
     </extension>
 </arquillian>

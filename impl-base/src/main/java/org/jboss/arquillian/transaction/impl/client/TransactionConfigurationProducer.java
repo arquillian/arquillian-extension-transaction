@@ -26,6 +26,7 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 
 import java.util.Collections;
@@ -38,25 +39,15 @@ import java.util.Map;
  */
 public class TransactionConfigurationProducer {
 
-    /**
-     * Represents the name of the transaction extension configuration.
-     */
     public static final String TRANSACTION_EXTENSION = "transaction";
 
-    /**
-     * Represents the name of the configuration property for storing the manager name.
-     */
     public static final String MANAGER_PROPERTY_NAME = "manager";
 
-    /**
-     * The arquillian descriptor.
-     */
+    public static  final String DEFAULT_TRANSACTION_MODE_PROPERTY_NAME = "transactionDefaultMode";
+
     @Inject
     private Instance<ArquillianDescriptor> descriptor;
 
-    /**
-     * The instance of transaction configuration.
-     */
     @Inject
     @ApplicationScoped
     private InstanceProducer<TransactionConfiguration> configurationInstance;
@@ -86,6 +77,10 @@ public class TransactionConfigurationProducer {
 
         TransactionConfiguration configuration = new TransactionConfiguration();
         configuration.setManager(extensionProperties.get(MANAGER_PROPERTY_NAME));
+        final String transactionDefaultMode = extensionProperties.get(DEFAULT_TRANSACTION_MODE_PROPERTY_NAME);
+        if (transactionDefaultMode != null && transactionDefaultMode.length() > 0) {
+            configuration.setTransactionDefaultMode(TransactionMode.valueOf(transactionDefaultMode));
+        }
 
         return configuration;
     }

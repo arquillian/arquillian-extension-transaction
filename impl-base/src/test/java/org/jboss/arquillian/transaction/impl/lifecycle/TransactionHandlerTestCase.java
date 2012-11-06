@@ -61,54 +61,28 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionHandlerTestCase extends AbstractTestTestBase {
 
-    /**
-     * Transaction provider.
-     */
     @Mock
     private TransactionProvider mockTransactionProvider;
 
-    /**
-     * Transaction provider.
-     */
     @Mock
     private TransactionContext mockTransactionContext;
 
-    /**
-     * Service loader.
-     */
     @Mock
     private ServiceLoader mockServiceLoader;
 
-    /**
-     * Deployment.
-     */
     @Mock
     private Deployment mockDeployment;
 
-    /**
-     * Deployment descriptor.
-     */
     @Mock
     private DeploymentDescription mockDeploymentDescriptor;
 
-    /**
-     * The configuration.
-     */
     private TransactionConfiguration transactionConfiguration;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(TransactionHandler.class);
     }
 
-    /**
-     * Sets up the test environment.
-     *
-     * @throws Exception if any error occurs
-     */
     @Before
     public void setUp() throws Exception {
 
@@ -126,12 +100,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         when(mockDeploymentDescriptor.testable()).thenReturn(false);
     }
 
-    /**
-     * Tests the {@link TransactionHandler#startTransactionBeforeTest(org.jboss.arquillian.test.spi.event.suite.Before)}
-     * method.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldStartTransaction() throws Exception {
 
@@ -151,12 +119,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#startTransactionBeforeTest(org.jboss.arquillian.test.spi.event.suite.Before)}
-     * method when the test method declares a transaction manager.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldStartTransactionWithTestMethodManager() throws Exception {
 
@@ -181,12 +143,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#startTransactionBeforeTest(org.jboss.arquillian.test.spi.event.suite.Before)}
-     * method when the test case declares a transaction manager.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldStartTransactionWithTestCaseManager() throws Exception {
 
@@ -211,12 +167,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#startTransactionBeforeTest(org.jboss.arquillian.test.spi.event.suite.Before)}
-     * method when manager should be read from the configuration.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldStartTransactionWithConfigurationManager() throws Exception {
 
@@ -241,12 +191,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#startTransactionBeforeTest(org.jboss.arquillian.test.spi.event.suite.Before)}
-     * method.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldNotStartTransaction() throws Exception {
 
@@ -266,12 +210,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#endTransactionAfterTest(org.jboss.arquillian.test.spi.event.suite.After)}
-     * method.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldRollbackTransaction() throws Exception {
 
@@ -293,12 +231,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#endTransactionAfterTest(org.jboss.arquillian.test.spi.event.suite.After)}
-     * method.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldRollbackTransactionOnFail() throws Exception {
 
@@ -320,12 +252,6 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).deactivate();
     }
 
-    /**
-     * Tests the {@link TransactionHandler#endTransactionAfterTest(org.jboss.arquillian.test.spi.event.suite.After)}
-     * method.
-     *
-     * @throws Exception if any error occurs
-     */
     @Test
     public void shouldCommitTransaction() throws Exception {
 
@@ -346,6 +272,28 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
 
         getManager().getContext(ClassContext.class).deactivate();
     }
+
+    @Test
+    public void shouldCommitTransactionWhenDefaultModeUsed() throws Exception {
+
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
+
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("defaultTest");
+
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+
+        // checks if the transaction context has been disposed
+        verify(mockTransactionContext).destroy();
+
+        // verifies that the transaction has been committed
+        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+
+        getManager().getContext(ClassContext.class).deactivate();
+    }
+
 
     @Test
     public void shouldActivateTransactionWhenRunAsClient() throws Exception {

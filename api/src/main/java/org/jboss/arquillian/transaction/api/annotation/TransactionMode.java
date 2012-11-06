@@ -38,5 +38,9 @@ public enum TransactionMode
    /**
     * Instructs extension to not use transactions for tests execution.
     */
-   DISABLED;
+   DISABLED,
+   /**
+    * Determined using externalized configuration. COMMIT by default.
+    */
+   DEFAULT;
 }

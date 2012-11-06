@@ -24,6 +24,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Before;
@@ -58,7 +59,7 @@ public class TransactionConfigurationProducerTestCase extends AbstractTestTestBa
     @Before
     public void setUp() throws Exception {
 
-        ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(
+        ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
                 new FileInputStream(new File("src/test/resources", "arquillian.xml")));
 
         bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
@@ -74,7 +75,8 @@ public class TransactionConfigurationProducerTestCase extends AbstractTestTestBa
         getManager().fire(new BeforeSuite());
 
         TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
-        assertEquals("Invalid transaction manager name.", "testManagerName", transactionConfiguration.getManager());
+        assertEquals("Wrongly mapped transaction manager name.", "testManagerName", transactionConfiguration.getManager());
+        assertEquals("Wrongly mapped transaction default mode.", TransactionMode.DISABLED, transactionConfiguration.getTransactionDefaultMode());
 
         getManager().getContext(ClassContext.class).deactivate();
     }
