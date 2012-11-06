@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+
 /**
  * The configuration converter.
  *
@@ -48,6 +50,7 @@ public class TransactionConfigurationConverter {
 
             Properties properties = new Properties();
             setPropertyValue(properties, "manager", configuration.getManager());
+            setPropertyValue(properties, "transactionDefaultMode", configuration.getTransactionDefaultMode().name());
             properties.store(outputStream, "arquillian-transaction-configuration");
 
             return outputStream.toString();
@@ -72,6 +75,10 @@ public class TransactionConfigurationConverter {
 
             TransactionConfiguration transactionConfiguration = new TransactionConfiguration();
             transactionConfiguration.setManager(getPropertyValue(properties, "manager"));
+            final String transactionDefaultMode = getPropertyValue(properties, "transactionDefaultMode");
+            if (transactionDefaultMode != null && transactionDefaultMode.length() > 0) {
+                transactionConfiguration.setTransactionDefaultMode(TransactionMode.valueOf(transactionDefaultMode));
+            }
             return transactionConfiguration;
         } catch (IOException e) {
             throw new RuntimeException("Could not import the configuration.", e);
@@ -92,7 +99,7 @@ public class TransactionConfigurationConverter {
 
         String value = properties.getProperty(propertyName);
 
-        if ("".equals(value)) {
+        if ("".equals(value.trim())) {
             return null;
         }
 
@@ -107,7 +114,6 @@ public class TransactionConfigurationConverter {
      * @param value        the property value
      */
     private static void setPropertyValue(Properties properties, String propertyName, String value) {
-
         properties.setProperty(propertyName, getPropertyValueOrDefault(value));
     }
 

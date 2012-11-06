@@ -143,13 +143,13 @@ public class TransactionHandler {
         return transactionMode != null && !TransactionMode.DISABLED.equals(transactionMode);
     }
 
+    // TODO fix this crap
     private boolean isTransactionSupported(TestEvent testEvent) {
         boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(), testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
         boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
 
-        return runAsClient || isLocal || (!runAsClient && isLocal);
+        return runAsClient || isLocal;
     }
-
 
     private boolean rollbackRequired(TestEvent testEvent) {
         return testRequiresRollbackDueToFailure() || TransactionMode.ROLLBACK.equals(getTransactionMode(testEvent));
@@ -174,6 +174,14 @@ public class TransactionHandler {
      * @return the transaction mode
      */
     private TransactionMode getTransactionMode(TestEvent testEvent) {
+        TransactionMode result = extractFromTestEvent(testEvent);
+        if (TransactionMode.DEFAULT.equals(result)) {
+            result = configurationInstance.get().getTransactionDefaultMode();
+        }
+        return result;
+    }
+
+    private TransactionMode extractFromTestEvent(TestEvent testEvent) {
         TransactionMode methodLevel = null;
         TransactionMode classLevel = null;
         final TransactionEnablerLoader transactionEnablerLoader = new TransactionEnablerLoader(serviceLoaderInstance.get());
@@ -189,6 +197,7 @@ public class TransactionHandler {
         if (methodLevel != null) {
             return methodLevel;
         }
+
         return classLevel;
     }
 

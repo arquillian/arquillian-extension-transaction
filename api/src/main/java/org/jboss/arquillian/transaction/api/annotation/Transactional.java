@@ -37,6 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *      <li>{@link TransactionMode#COMMIT} which is the default mode</li>
  *      <li>{@link TransactionMode#ROLLBACK}</li>
  *      <li>{@link TransactionMode#DISABLED}</li>
+ *      <li></li>
  * </ul>
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
@@ -45,17 +46,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(value={TYPE, METHOD})
 @Retention(value=RUNTIME)
 @Inherited
-public @interface Transactional
-{
+public @interface Transactional {
+
+    TransactionMode value() default TransactionMode.DEFAULT;
+
     /**
      * The optional name of the manager to be used for handling transaction for
      * given test case or method.
      */
     String manager() default "";
-
-    /**
-     * The transaction mode.
-     */
-   TransactionMode value() default TransactionMode.COMMIT;
 
 }
