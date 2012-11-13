@@ -15,27 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.transaction.impl.client;
+package org.jboss.arquillian.transaction.impl.container;
 
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
+import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
-/**
- * Registers the extension.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
-public class TransactionExtension implements LoadableExtension {
+public class InContainerTransactionHandler extends TransactionHandler {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void register(ExtensionBuilder builder) {
-        builder.context(TransactionContextImpl.class);
-        builder.observer(TransactionConfigurationProducer.class);
-        builder.observer(ClientSideTransactionHandler.class);
-        builder.service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
+    public boolean isTransactionSupported(TestEvent testEvent) {
+        return true;
     }
+
 }

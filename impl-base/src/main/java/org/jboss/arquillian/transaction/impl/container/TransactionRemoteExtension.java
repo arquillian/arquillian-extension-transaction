@@ -19,7 +19,6 @@ package org.jboss.arquillian.transaction.impl.container;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
-import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
 /**
  * Registers the extension in the remote container.
@@ -33,14 +32,8 @@ public class TransactionRemoteExtension implements RemoteLoadableExtension {
      */
     @Override
     public void register(ExtensionBuilder builder) {
-
-        // registers the transaction context
         builder.context(TransactionContextImpl.class);
-
-        // registers the configuration producer
         builder.observer(TransactionConfigurationRemoteProducer.class);
-
-        // registers the transaction handler
-        builder.observer(TransactionHandler.class);
+        builder.observer(InContainerTransactionHandler.class);
     }
 }

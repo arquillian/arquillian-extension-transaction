@@ -40,6 +40,7 @@ import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.arquillian.transaction.impl.client.ClientSideTransactionHandler;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
 import org.jboss.arquillian.transaction.spi.event.BeforeTransactionStarted;
@@ -59,7 +60,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionHandlerTestCase extends AbstractTestTestBase {
+public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
 
     @Mock
     private TransactionProvider mockTransactionProvider;
@@ -80,7 +81,7 @@ public class TransactionHandlerTestCase extends AbstractTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(TransactionHandler.class);
+        extensions.add(ClientSideTransactionHandler.class);
     }
 
     @Before
