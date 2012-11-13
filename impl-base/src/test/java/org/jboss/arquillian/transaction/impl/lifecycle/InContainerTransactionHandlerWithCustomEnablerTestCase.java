@@ -36,6 +36,7 @@ import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
+import org.jboss.arquillian.transaction.impl.container.InContainerTransactionHandler;
 import org.jboss.arquillian.transaction.impl.lifecycle.CustomTransactionEnabler.CustomTransactional;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
@@ -56,7 +57,7 @@ import org.mockito.stubbing.Answer;
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionHandlerWithCustomEnablerTestCase extends AbstractTestTestBase {
+public class InContainerTransactionHandlerWithCustomEnablerTestCase extends AbstractTestTestBase {
 
     /**
      * Transaction provider.
@@ -98,7 +99,7 @@ public class TransactionHandlerWithCustomEnablerTestCase extends AbstractTestTes
      */
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(TransactionHandler.class);
+        extensions.add(InContainerTransactionHandler.class);
     }
 
     /**

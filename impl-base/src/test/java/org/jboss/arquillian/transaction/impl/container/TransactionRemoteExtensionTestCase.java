@@ -17,20 +17,18 @@
  */
 package org.jboss.arquillian.transaction.impl.container;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
-import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests {@link TransactionRemoteExtension} class.
@@ -73,7 +71,7 @@ public class TransactionRemoteExtensionTestCase {
 
         verify(mockExtensionBuilder).context(TransactionContextImpl.class);
         verify(mockExtensionBuilder).observer(TransactionConfigurationRemoteProducer.class);
-        verify(mockExtensionBuilder).observer(TransactionHandler.class);
+        verify(mockExtensionBuilder).observer(InContainerTransactionHandler.class);
         verifyNoMoreInteractions(mockExtensionBuilder);
     }
 }

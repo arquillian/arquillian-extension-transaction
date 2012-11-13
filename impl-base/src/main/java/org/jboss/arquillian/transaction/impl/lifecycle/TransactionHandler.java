@@ -17,8 +17,6 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -59,7 +57,7 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
  * @see Transactional
  * @see TransactionProvider
  */
-public class TransactionHandler {
+public abstract class TransactionHandler {
 
     /**
      * Instance of {@link ServiceLoader}, used for retrieving
@@ -80,11 +78,7 @@ public class TransactionHandler {
     @Inject
     private Instance<TestResult> testResultInstance;
 
-    @Inject
-    private Instance<Deployment> deploymentInstance;
-
-    @Inject
-    private Instance<Container> containerInstance;
+    public abstract boolean isTransactionSupported(TestEvent testEvent);
 
     public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest) {
 
@@ -126,7 +120,6 @@ public class TransactionHandler {
 
     // -- Private methods
 
-
     /**
      * Returns whether the transaction is enabled for the current test.
      *
@@ -141,14 +134,6 @@ public class TransactionHandler {
 
         final TransactionMode transactionMode = getTransactionMode(testEvent);
         return transactionMode != null && !TransactionMode.DISABLED.equals(transactionMode);
-    }
-
-    // TODO fix this crap
-    private boolean isTransactionSupported(TestEvent testEvent) {
-        boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(), testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
-        boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
-
-        return runAsClient || isLocal;
     }
 
     private boolean rollbackRequired(TestEvent testEvent) {

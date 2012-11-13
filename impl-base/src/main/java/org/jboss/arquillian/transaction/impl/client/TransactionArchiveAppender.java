@@ -59,22 +59,11 @@ public class TransactionArchiveAppender implements AuxiliaryArchiveAppender {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction.jar");
 
-        // includes the api packages
-        archive.addPackage(Transactional.class.getPackage());
+        bundleApi(archive);
 
-        // includes the spi packages
-        archive.addPackage(TransactionScope.class.getPackage());
-        archive.addPackage(TransactionContext.class.getPackage());
-        archive.addPackage(BeforeTransactionStarted.class.getPackage());
-        archive.addPackage(TransactionProvider.class.getPackage());
-        archive.addPackage(TransactionalTest.class.getPackage());
+        bundleSpi(archive);
 
-        // includes the impl packages
-        archive.addPackage(TransactionRemoteExtension.class.getPackage());
-        archive.addPackage(TransactionConfiguration.class.getPackage());
-        archive.addPackage(TransactionContextImpl.class.getPackage());
-        archive.addPackage(TransactionHandler.class.getPackage());
-        archive.addPackage(TransactionalTestImpl.class.getPackage());
+        bundleImplementation(archive);
 
         // adds the extension properties
         archive.addAsResource(new StringAsset(
@@ -85,5 +74,25 @@ public class TransactionArchiveAppender implements AuxiliaryArchiveAppender {
         archive.addAsServiceProvider(RemoteLoadableExtension.class, TransactionRemoteExtension.class);
 
         return archive;
+    }
+
+    private void bundleImplementation(JavaArchive archive) {
+        archive.addPackage(TransactionRemoteExtension.class.getPackage());
+        archive.addPackage(TransactionConfiguration.class.getPackage());
+        archive.addPackage(TransactionContextImpl.class.getPackage());
+        archive.addPackage(TransactionHandler.class.getPackage());
+        archive.addPackage(TransactionalTestImpl.class.getPackage());
+    }
+
+    private void bundleSpi(JavaArchive archive) {
+        archive.addPackage(TransactionScope.class.getPackage());
+        archive.addPackage(TransactionContext.class.getPackage());
+        archive.addPackage(BeforeTransactionStarted.class.getPackage());
+        archive.addPackage(TransactionProvider.class.getPackage());
+        archive.addPackage(TransactionalTest.class.getPackage());
+    }
+
+    private void bundleApi(JavaArchive archive) {
+        archive.addPackage(Transactional.class.getPackage());
     }
 }
