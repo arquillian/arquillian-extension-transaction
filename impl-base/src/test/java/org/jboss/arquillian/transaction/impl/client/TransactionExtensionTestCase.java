@@ -17,11 +17,6 @@
  */
 package org.jboss.arquillian.transaction.impl.client;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
@@ -31,48 +26,54 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests {@link TransactionExtension} class.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionExtensionTestCase {
+public class TransactionExtensionTestCase
+{
 
-    /**
-     * Represents the instance of tested class.
-     */
-    private TransactionExtension instance;
+   /**
+    * Represents the instance of tested class.
+    */
+   private TransactionExtension instance;
 
-    /**
-     * Extension builder.
-     */
-    @Mock
-    private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
+   /**
+    * Extension builder.
+    */
+   @Mock
+   private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
 
-    /**
-     * Sets up the test environment.
-     */
-    @Before
-    public void setUp() {
+   /**
+    * Sets up the test environment.
+    */
+   @Before
+   public void setUp()
+   {
 
-        instance = new TransactionExtension();
-    }
+      instance = new TransactionExtension();
+   }
 
-    /**
-     * Tests the {@link TransactionExtension#register(LoadableExtension.ExtensionBuilder)} method.
-     */
-    @Test
-    public void shouldRegisterExtensionServices() {
+   /**
+    * Tests the {@link TransactionExtension#register(LoadableExtension.ExtensionBuilder)} method.
+    */
+   @Test
+   public void shouldRegisterExtensionServices()
+   {
 
-        when(mockExtensionBuilder.service(any(Class.class), any(Class.class))).thenReturn(mockExtensionBuilder);
+      when(mockExtensionBuilder.service(any(Class.class), any(Class.class))).thenReturn(mockExtensionBuilder);
 
-        instance.register(mockExtensionBuilder);
+      instance.register(mockExtensionBuilder);
 
-        verify(mockExtensionBuilder).context(TransactionContextImpl.class);
-        verify(mockExtensionBuilder).observer(TransactionConfigurationProducer.class);
-        verify(mockExtensionBuilder).observer(ClientSideTransactionHandler.class);
-        verify(mockExtensionBuilder).service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
-        verifyNoMoreInteractions(mockExtensionBuilder);
-    }
+      verify(mockExtensionBuilder).context(TransactionContextImpl.class);
+      verify(mockExtensionBuilder).observer(TransactionConfigurationProducer.class);
+      verify(mockExtensionBuilder).observer(ClientSideTransactionHandler.class);
+      verify(mockExtensionBuilder).service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
+      verifyNoMoreInteractions(mockExtensionBuilder);
+   }
 }

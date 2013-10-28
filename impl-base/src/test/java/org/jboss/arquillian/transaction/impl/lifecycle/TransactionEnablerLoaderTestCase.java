@@ -17,14 +17,6 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 import org.junit.Before;
@@ -33,52 +25,66 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionEnablerLoaderTestCase {
+public class TransactionEnablerLoaderTestCase
+{
 
-    @Mock
-    private ServiceLoader mockServiceLoader;
+   @Mock
+   private ServiceLoader mockServiceLoader;
 
-    TransactionEnablerLoader transactionEnablerLoader;
+   TransactionEnablerLoader transactionEnablerLoader;
 
-    @Before
-    public void initialize() {
-        transactionEnablerLoader = new TransactionEnablerLoader(mockServiceLoader);
-    }
+   @Before
+   public void initialize()
+   {
+      transactionEnablerLoader = new TransactionEnablerLoader(mockServiceLoader);
+   }
 
-    @Test
-    public void shouldUseDefaultImplementationWhenNoAlternateDefinedThroughSpi() throws Exception {
-        // when
-        Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
+   @Test
+   public void shouldUseDefaultImplementationWhenNoAlternateDefinedThroughSpi() throws Exception
+   {
+      // when
+      Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
 
-        // then
-        assertThat(transformToClasses(transactionEnablers)).containsOnly(AnnotationBasedTransactionEnabler.class);
-    }
+      // then
+      assertThat(transformToClasses(transactionEnablers)).containsOnly(AnnotationBasedTransactionEnabler.class);
+   }
 
-    @Test
-    public void shouldResolveCustomTransactionEnablerWhenDefinedThroughSpi() throws Exception {
-        // given
-        when(mockServiceLoader.all(TransactionEnabler.class)).thenReturn(Arrays.<TransactionEnabler>asList(new CustomTransactionEnabler()));
+   @Test
+   public void shouldResolveCustomTransactionEnablerWhenDefinedThroughSpi() throws Exception
+   {
+      // given
+      when(mockServiceLoader.all(TransactionEnabler.class)).thenReturn(Arrays.<TransactionEnabler>asList(new CustomTransactionEnabler()));
 
-        // when
-        Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
+      // when
+      Collection<TransactionEnabler> transactionEnablers = transactionEnablerLoader.getTransactionEnablers();
 
-        // then
-        assertThat(transformToClasses(transactionEnablers)).containsExactly(AnnotationBasedTransactionEnabler.class, CustomTransactionEnabler.class);
+      // then
+      assertThat(transformToClasses(transactionEnablers)).containsExactly(AnnotationBasedTransactionEnabler.class, CustomTransactionEnabler.class);
 
-    }
+   }
 
-    // -- Test helpers
+   // -- Test helpers
 
-    private List<Class<?>> transformToClasses(Collection<TransactionEnabler> transactionEnablers) {
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
-        for (TransactionEnabler enabler : transactionEnablers) {
-            classes.add(enabler.getClass());
-        }
-        return classes;
-    }
+   private List<Class<?>> transformToClasses(Collection<TransactionEnabler> transactionEnablers)
+   {
+      final List<Class<?>> classes = new ArrayList<Class<?>>();
+      for (TransactionEnabler enabler : transactionEnablers)
+      {
+         classes.add(enabler.getClass());
+      }
+      return classes;
+   }
 
 }

@@ -17,12 +17,6 @@
 
 package org.jboss.arquillian.transaction.jta.provider;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -30,110 +24,135 @@ import org.jboss.arquillian.transaction.spi.annotation.TransactionScope;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+
 /**
  * JTA transaction provider.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class JtaTransactionProvider implements TransactionProvider {
+public class JtaTransactionProvider implements TransactionProvider
+{
 
-    private static final String DEFAULT_TRANSACTION_JNDI_NAME = "java:comp/UserTransaction";
+   private static final String DEFAULT_TRANSACTION_JNDI_NAME = "java:comp/UserTransaction";
 
-    @Inject
-    private Instance<Context> jndiContextInstance;
+   @Inject
+   private Instance<Context> jndiContextInstance;
 
-    @Inject
-    @TransactionScope
-    private InstanceProducer<UserTransaction> userTransactionInstance;
+   @Inject
+   @TransactionScope
+   private InstanceProducer<UserTransaction> userTransactionInstance;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void beginTransaction(TransactionalTest transactionalTest) {
-        try {
-            UserTransaction transaction = getUserTransaction(transactionalTest);
-            userTransactionInstance.set(transaction);
-            if (isTransactionNotActive(transaction)) {
-                transaction.begin();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to start transaction", e);
-        }
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void beginTransaction(TransactionalTest transactionalTest)
+   {
+      try
+      {
+         UserTransaction transaction = getUserTransaction(transactionalTest);
+         userTransactionInstance.set(transaction);
+         if (isTransactionNotActive(transaction))
+         {
+            transaction.begin();
+         }
+      } catch (Exception e)
+      {
+         throw new RuntimeException("Unable to start transaction", e);
+      }
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void commitTransaction(TransactionalTest transactionalTest) {
-        try {
-            final UserTransaction transaction = userTransactionInstance.get();
-            if (isTransactionMarkedToRollback(transaction)) {
-                transaction.rollback();
-            } else {
-                transaction.commit();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to commit the transaction.", e);
-        }
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void commitTransaction(TransactionalTest transactionalTest)
+   {
+      try
+      {
+         final UserTransaction transaction = userTransactionInstance.get();
+         if (isTransactionMarkedToRollback(transaction))
+         {
+            transaction.rollback();
+         } else
+         {
+            transaction.commit();
+         }
+      } catch (Exception e)
+      {
+         throw new RuntimeException("Unable to commit the transaction.", e);
+      }
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rollbackTransaction(TransactionalTest transactionalTest) {
-        try {
-            userTransactionInstance.get().rollback();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not rollback the transaction.", e);
-        }
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void rollbackTransaction(TransactionalTest transactionalTest)
+   {
+      try
+      {
+         userTransactionInstance.get().rollback();
+      } catch (Exception e)
+      {
+         throw new RuntimeException("Could not rollback the transaction.", e);
+      }
+   }
 
-    /**
-     * Retrieves the {@link UserTransaction} from JNDI context.
-     *
-     * @param transactionalTest
-     *            the transaction test
-     *
-     * @return the {@link UserTransaction}
-     */
-    private UserTransaction getUserTransaction(TransactionalTest transactionalTest) {
+   /**
+    * Retrieves the {@link UserTransaction} from JNDI context.
+    *
+    * @param transactionalTest the transaction test
+    * @return the {@link UserTransaction}
+    */
+   private UserTransaction getUserTransaction(TransactionalTest transactionalTest)
+   {
 
-        String jndiName = getJtaTransactionJndiName(transactionalTest);
+      String jndiName = getJtaTransactionJndiName(transactionalTest);
 
-        try {
+      try
+      {
 
-            Context context = jndiContextInstance.get();
+         Context context = jndiContextInstance.get();
 
-            if (context == null) {
-                throw new RuntimeException("No Naming Context available.");
-            }
+         if (context == null)
+         {
+            throw new RuntimeException("No Naming Context available.");
+         }
 
-            return (UserTransaction) context.lookup(jndiName);
-        } catch (NamingException e) {
+         return (UserTransaction) context.lookup(jndiName);
+      } catch (NamingException e)
+      {
 
-            throw new RuntimeException("Failed obtaining transaction.", e);
-        }
-    }
+         throw new RuntimeException("Failed obtaining transaction.", e);
+      }
+   }
 
-    private String getJtaTransactionJndiName(TransactionalTest transactionalTest) {
-        String jndiName = DEFAULT_TRANSACTION_JNDI_NAME;
+   private String getJtaTransactionJndiName(TransactionalTest transactionalTest)
+   {
+      String jndiName = DEFAULT_TRANSACTION_JNDI_NAME;
 
-        if (transactionalTest.getManager() != null) {
-            jndiName = transactionalTest.getManager();
-        }
+      if (transactionalTest.getManager() != null)
+      {
+         jndiName = transactionalTest.getManager();
+      }
 
-        return jndiName;
-    }
+      return jndiName;
+   }
 
-    private boolean isTransactionNotActive(final UserTransaction transaction) throws SystemException {
-        return Status.STATUS_NO_TRANSACTION == transaction.getStatus();
-    }
+   private boolean isTransactionNotActive(final UserTransaction transaction) throws SystemException
+   {
+      return Status.STATUS_NO_TRANSACTION == transaction.getStatus();
+   }
 
-    private boolean isTransactionMarkedToRollback(final UserTransaction transaction) throws SystemException {
-        return Status.STATUS_MARKED_ROLLBACK == transaction.getStatus();
-    }
+   private boolean isTransactionMarkedToRollback(final UserTransaction transaction) throws SystemException
+   {
+      return Status.STATUS_MARKED_ROLLBACK == transaction.getStatus();
+   }
 }

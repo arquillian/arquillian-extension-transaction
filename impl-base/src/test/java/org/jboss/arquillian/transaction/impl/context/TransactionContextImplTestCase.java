@@ -29,39 +29,43 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionContextImplTestCase {
+public class TransactionContextImplTestCase
+{
 
-    /**
-     * Represents the instance of tested class.
-     */
-    private TransactionContextImpl instance;
+   /**
+    * Represents the instance of tested class.
+    */
+   private TransactionContextImpl instance;
 
-    /**
-     * Sets up the test environment.
-     *
-     * @throws Exception if any error occurs
-     */
-    @Before
-    public void setUp() throws Exception {
+   /**
+    * Sets up the test environment.
+    *
+    * @throws Exception if any error occurs
+    */
+   @Before
+   public void setUp() throws Exception
+   {
 
-        instance = new TransactionContextImpl();
-    }
+      instance = new TransactionContextImpl();
+   }
 
-    /**
-     * Tests the {@link TransactionContextImpl#getScope()} method.
-     */
-    @Test
-    public void shouldHandleTransactionScope() {
+   /**
+    * Tests the {@link TransactionContextImpl#getScope()} method.
+    */
+   @Test
+   public void shouldHandleTransactionScope()
+   {
 
-        assertEquals("Incorrect scope has been returned.", TransactionScope.class, instance.getScope());
-    }
+      assertEquals("Incorrect scope has been returned.", TransactionScope.class, instance.getScope());
+   }
 
-    /**
-     * Tests the {@link TransactionContextImpl#createNewObjectStore()} method.
-     */
-    @Test
-    public void shouldCreateObjectStore() {
+   /**
+    * Tests the {@link TransactionContextImpl#createNewObjectStore()} method.
+    */
+   @Test
+   public void shouldCreateObjectStore()
+   {
 
-        assertNotNull("Method returned null result.", instance.createNewObjectStore());
-    }
+      assertNotNull("Method returned null result.", instance.createNewObjectStore());
+   }
 }

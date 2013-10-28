@@ -1,84 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Parent -->
-    <parent>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-transaction-parent</artifactId>
-        <version>1.0.0.Final-SNAPSHOT</version>
-    </parent>
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-transaction-parent</artifactId>
+    <version>1.0.0.Final-SNAPSHOT</version>
+  </parent>
 
-    <!-- Model Version -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!-- Artifact Configuration -->
-    <artifactId>arquillian-transaction-jta</artifactId>
-    <name>Arquillian Transaction Extension: JTA</name>
-    <description>JTA implementation for transaction extension</description>
+  <!-- Artifact Configuration -->
+  <artifactId>arquillian-transaction-jta</artifactId>
+  <name>Arquillian Transaction Extension: JTA</name>
+  <description>JTA implementation for transaction extension</description>
 
-    <!-- Properties -->
-    <properties>
-        <version.jta>1.1</version.jta>
-    </properties>
+  <!-- Properties -->
+  <properties>
+    <version.jta>1.1</version.jta>
+  </properties>
 
-    <!-- Dependencies -->
-    <dependencies>
+  <!-- Dependencies -->
+  <dependencies>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-transaction-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-transaction-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-transaction-spi</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-transaction-spi</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-transaction-impl-base</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-transaction-impl-base</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-            <version>${version.jta}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>${version.jta}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>org.jboss.arquillian.test</groupId>
-            <artifactId>arquillian-test-impl-base</artifactId>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-impl-base</artifactId>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.core</groupId>
-            <artifactId>arquillian-core-impl-base</artifactId>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.core</groupId>
+      <artifactId>arquillian-core-impl-base</artifactId>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.easytesting</groupId>
-            <artifactId>fest-assert</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
 

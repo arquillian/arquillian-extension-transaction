@@ -26,63 +26,68 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionProviderNotFoundExceptionTestCase {
+public class TransactionProviderNotFoundExceptionTestCase
+{
 
-    /**
-     * The error message used for testing.
-     */
-    private static final String MESSAGE = "MESSAGE";
+   /**
+    * The error message used for testing.
+    */
+   private static final String MESSAGE = "MESSAGE";
 
-    /**
-     * The error message used for testing.
-     */
-    private static final Throwable CAUSE = new Throwable();
+   /**
+    * The error message used for testing.
+    */
+   private static final Throwable CAUSE = new Throwable();
 
-    /**
-     * Represents the instance of tested class.
-     */
-    private TransactionProviderNotFoundException instance;
+   /**
+    * Represents the instance of tested class.
+    */
+   private TransactionProviderNotFoundException instance;
 
-    /**
-     * Tests if the {@link TransactionProviderNotFoundException} extends the {@link RuntimeException}.
-     */
-    @Test
-    public void shouldExtendRuntimeException() {
+   /**
+    * Tests if the {@link TransactionProviderNotFoundException} extends the {@link RuntimeException}.
+    */
+   @Test
+   public void shouldExtendRuntimeException()
+   {
 
-        assertEquals("Class does not extend the proper base class.", RuntimeException.class,
-                TransactionProviderNotFoundException.class.getSuperclass());
-    }
+      assertEquals("Class does not extend the proper base class.", RuntimeException.class,
+            TransactionProviderNotFoundException.class.getSuperclass());
+   }
 
-    /**
-     * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException()} constructor.
-     */
-    @Test
-    public void shouldCreateExceptionInstance() {
+   /**
+    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException()} constructor.
+    */
+   @Test
+   public void shouldCreateExceptionInstance()
+   {
 
-        instance = new TransactionProviderNotFoundException();
-    }
+      instance = new TransactionProviderNotFoundException();
+   }
 
-    /**
-     * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String)} constructor.
-     */
-    @Test
-    public void shouldCreateExceptionInstanceWithDetailedErrorMessage() {
+   /**
+    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String)} constructor.
+    */
+   @Test
+   public void shouldCreateExceptionInstanceWithDetailedErrorMessage()
+   {
 
-        instance = new TransactionProviderNotFoundException(MESSAGE);
+      instance = new TransactionProviderNotFoundException(MESSAGE);
 
-        assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
-    }
+      assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
+   }
 
-    /**
-     * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String, Throwable)}
-     * constructor.
-     */
-    @Test
-    public void shouldCreateExceptionInstanceWithDetailedErrorMessageAndInnerCause() {
+   /**
+    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String, Throwable)}
+    * constructor.
+    */
+   @Test
+   public void shouldCreateExceptionInstanceWithDetailedErrorMessageAndInnerCause()
+   {
 
-        instance = new TransactionProviderNotFoundException(MESSAGE, CAUSE);
+      instance = new TransactionProviderNotFoundException(MESSAGE, CAUSE);
 
-        assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
-        assertEquals("The exception has invalid inner cause.", CAUSE, instance.getCause());
-    }
+      assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
+      assertEquals("The exception has invalid inner cause.", CAUSE, instance.getCause());
+   }
 }

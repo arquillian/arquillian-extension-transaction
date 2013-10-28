@@ -21,55 +21,56 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 
 /**
- * Implementing this interface allows customize strategy for determining
- * if transaction should be enabled for given test.
- *
+ * Implementing this interface allows customization of the strategy for determining
+ * if transaction should be enabled for given the test.
+ * <br />
  * This mechanism is intended to handle multiple implementations.
  * It's realized through the chain call, however order is not guaranteed.
  * It will always use the default one {@see org.jboss.arquillian.transaction.impl.lifecycle.AnnotationBasedTransactionEnabler}
  * as the precedent.
+ * <br />
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
- *
  */
-public interface TransactionEnabler {
+public interface TransactionEnabler
+{
 
-    /**
-     * Verifies if the test class contains metadata
-     * which can be used by given extension point to determine
-     * transaction configuration.
-     *
-     * @param testEvent
-     * @return
-     */
-    boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent);
+   /**
+    * Verifies if the test class contains metadata
+    * which can be used by given extension point to determine
+    * transaction configuration.
+    *
+    * @param testEvent
+    * @return
+    */
+   boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent);
 
-    /**
-     * Verifies if the test method contains metadata
-     * which can be used by given extension point to determine
-     * transaction configuration.
-     *
-     * @param testEvent
-     * @return
-     */
-    boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent);
+   /**
+    * Verifies if the test method contains metadata
+    * which can be used by given extension point to determine
+    * transaction configuration.
+    *
+    * @param testEvent
+    * @return
+    */
+   boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent);
 
-    /**
-     * Determines transaction mode using custom logic
-     * of the given SPI implementation on class level.
-     *
-     * @param testEvent
-     * @return
-     */
-    TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent);
+   /**
+    * Determines transaction mode using custom logic
+    * of the given SPI implementation on class level.
+    *
+    * @param testEvent
+    * @return
+    */
+   TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent);
 
-    /**
-     * Determines transaction mode using custom logic
-     * of the given SPI implementation on test level.
-     *
-     * @param testEvent
-     * @return
-     */
-    TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent);
+   /**
+    * Determines transaction mode using custom logic
+    * of the given SPI implementation on test level.
+    *
+    * @param testEvent
+    * @return
+    */
+   TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent);
 
 }

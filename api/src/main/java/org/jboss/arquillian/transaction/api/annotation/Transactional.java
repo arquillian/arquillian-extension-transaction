@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -26,34 +26,32 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- *
- * Indicates that test needs to be wrapped within the transaction.
- * By default it's enabled for all tests which are using Arquillian Persistence
- * extension. It might be defined either on a class or a method level, where
+ * Indicates that test will be wrapped in the transaction.
+ * <br />
+ * It might be defined either on a class or a method level, where
  * latter takes precedence if used.
  * <br />
  * Following modes are available:
  * <ul>
- *      <li>{@link TransactionMode#COMMIT} which is the default mode</li>
- *      <li>{@link TransactionMode#ROLLBACK}</li>
- *      <li>{@link TransactionMode#DISABLED}</li>
- *      <li></li>
+ * <li>{@link TransactionMode#COMMIT} which is the default mode</li>
+ * <li>{@link TransactionMode#ROLLBACK}</li>
+ * <li>{@link TransactionMode#DISABLED}</li>
  * </ul>
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
- *
  */
-@Target(value={TYPE, METHOD})
-@Retention(value=RUNTIME)
+@Target(value = {TYPE, METHOD})
+@Retention(value = RUNTIME)
 @Inherited
-public @interface Transactional {
+public @interface Transactional
+{
 
-    TransactionMode value() default TransactionMode.DEFAULT;
+   TransactionMode value() default TransactionMode.DEFAULT;
 
-    /**
-     * The optional name of the manager to be used for handling transaction for
-     * given test case or method.
-     */
-    String manager() default "";
+   /**
+    * The optional name of the manager to be used for handling transaction for
+    * given test case or method.
+    */
+   String manager() default "";
 
 }

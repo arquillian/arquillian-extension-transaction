@@ -22,12 +22,9 @@ package org.jboss.arquillian.transaction.spi.test;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public interface TransactionalTest {
+public interface TransactionalTest
+{
 
-    /**
-     * Retrieves the manager.
-     *
-     * @return the manager
-     */
-    String getManager();
+   String getManager();
+
 }

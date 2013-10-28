@@ -26,14 +26,16 @@ import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class JtaTransactionRemoteExtension implements RemoteLoadableExtension {
+public class JtaTransactionRemoteExtension implements RemoteLoadableExtension
+{
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void register(ExtensionBuilder builder) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void register(ExtensionBuilder builder)
+   {
 
-        builder.service(TransactionProvider.class, JtaTransactionProvider.class);
-    }
+      builder.service(TransactionProvider.class, JtaTransactionProvider.class);
+   }
 }

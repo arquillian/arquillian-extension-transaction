@@ -26,23 +26,25 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionalTestImplTestCase {
+public class TransactionalTestImplTestCase
+{
 
-    /**
-     * Represents the instance of tested class.
-     */
-    private TransactionalTestImpl instance;
+   /**
+    * Represents the instance of tested class.
+    */
+   private TransactionalTestImpl instance;
 
-    /**
-     * Tests {@link TransactionalTestImpl#getManager()} method.</p>
-     */
-    @Test
-    public void shouldReturnManager() {
+   /**
+    * Tests {@link TransactionalTestImpl#getManager()} method.</p>
+    */
+   @Test
+   public void shouldReturnManager()
+   {
 
-        String manager = "manager";
+      String manager = "manager";
 
-        instance = new TransactionalTestImpl(manager);
+      instance = new TransactionalTestImpl(manager);
 
-        assertEquals("Invalid property value.", manager, instance.getManager());
-    }
+      assertEquals("Invalid property value.", manager, instance.getManager());
+   }
 }

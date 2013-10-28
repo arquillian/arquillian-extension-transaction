@@ -37,73 +37,78 @@ import java.util.Map;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionConfigurationProducer {
+public class TransactionConfigurationProducer
+{
 
-    public static final String TRANSACTION_EXTENSION = "transaction";
+   public static final String TRANSACTION_EXTENSION = "transaction";
 
-    public static final String MANAGER_PROPERTY_NAME = "manager";
+   public static final String MANAGER_PROPERTY_NAME = "manager";
 
-    public static  final String DEFAULT_TRANSACTION_MODE_PROPERTY_NAME = "transactionDefaultMode";
+   public static final String DEFAULT_TRANSACTION_MODE_PROPERTY_NAME = "transactionDefaultMode";
 
-    @Inject
-    private Instance<ArquillianDescriptor> descriptor;
+   @Inject
+   private Instance<ArquillianDescriptor> descriptor;
 
-    @Inject
-    @ApplicationScoped
-    private InstanceProducer<TransactionConfiguration> configurationInstance;
+   @Inject
+   @ApplicationScoped
+   private InstanceProducer<TransactionConfiguration> configurationInstance;
 
-    /**
-     * Loads the extension configuration before the test suite is being run.
-     *
-     * @param beforeSuiteEvent the event fired before execution of the test suite
-     */
-    public void loadConfiguration(@Observes BeforeSuite beforeSuiteEvent) {
+   /**
+    * Loads the extension configuration before the test suite is being run.
+    *
+    * @param beforeSuiteEvent the event fired before execution of the test suite
+    */
+   public void loadConfiguration(@Observes BeforeSuite beforeSuiteEvent)
+   {
 
-        TransactionConfiguration config = getConfiguration(descriptor.get());
+      TransactionConfiguration config = getConfiguration(descriptor.get());
 
-        configurationInstance.set(config);
-    }
+      configurationInstance.set(config);
+   }
 
-    /**
-     * Creates the configuration from the passed arquillian descriptor.
-     *
-     * @param arquillianDescriptor the arquillian descriptor
-     *
-     * @return the created configuration
-     */
-    private TransactionConfiguration getConfiguration(ArquillianDescriptor arquillianDescriptor) {
+   /**
+    * Creates the configuration from the passed arquillian descriptor.
+    *
+    * @param arquillianDescriptor the arquillian descriptor
+    * @return the created configuration
+    */
+   private TransactionConfiguration getConfiguration(ArquillianDescriptor arquillianDescriptor)
+   {
 
-        Map<String, String> extensionProperties = getExtensionProperties(arquillianDescriptor);
+      Map<String, String> extensionProperties = getExtensionProperties(arquillianDescriptor);
 
-        TransactionConfiguration configuration = new TransactionConfiguration();
-        configuration.setManager(extensionProperties.get(MANAGER_PROPERTY_NAME));
-        final String transactionDefaultMode = extensionProperties.get(DEFAULT_TRANSACTION_MODE_PROPERTY_NAME);
-        if (transactionDefaultMode != null && transactionDefaultMode.length() > 0) {
-            configuration.setTransactionDefaultMode(TransactionMode.valueOf(transactionDefaultMode));
-        }
+      TransactionConfiguration configuration = new TransactionConfiguration();
+      configuration.setManager(extensionProperties.get(MANAGER_PROPERTY_NAME));
+      final String transactionDefaultMode = extensionProperties.get(DEFAULT_TRANSACTION_MODE_PROPERTY_NAME);
+      if (transactionDefaultMode != null && transactionDefaultMode.length() > 0)
+      {
+         configuration.setTransactionDefaultMode(TransactionMode.valueOf(transactionDefaultMode));
+      }
 
-        return configuration;
-    }
+      return configuration;
+   }
 
-    /**
-     * Retrieves the extension properties
-     *
-     * @param arquillianDescriptor the arquillian descriptor
-     *
-     * @return the extension properties
-     */
-    private Map<String, String> getExtensionProperties(ArquillianDescriptor arquillianDescriptor) {
+   /**
+    * Retrieves the extension properties
+    *
+    * @param arquillianDescriptor the arquillian descriptor
+    * @return the extension properties
+    */
+   private Map<String, String> getExtensionProperties(ArquillianDescriptor arquillianDescriptor)
+   {
 
-        for (ExtensionDef extensionDef : arquillianDescriptor.getExtensions()) {
+      for (ExtensionDef extensionDef : arquillianDescriptor.getExtensions())
+      {
 
-            if (TRANSACTION_EXTENSION.equals(extensionDef.getExtensionName())) {
+         if (TRANSACTION_EXTENSION.equals(extensionDef.getExtensionName()))
+         {
 
-                return extensionDef.getExtensionProperties();
-            }
-        }
+            return extensionDef.getExtensionProperties();
+         }
+      }
 
-        return Collections.emptyMap();
-    }
+      return Collections.emptyMap();
+   }
 
 
 }

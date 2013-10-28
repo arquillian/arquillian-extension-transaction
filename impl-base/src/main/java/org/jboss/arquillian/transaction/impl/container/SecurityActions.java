@@ -27,41 +27,46 @@ import java.security.PrivilegedAction;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public final class SecurityActions {
+public final class SecurityActions
+{
 
-    /**
-     * Creates new instance of {@link SecurityActions}.
-     *
-     * Private constructor prevents from instantiation outside this class.
-     */
-    private SecurityActions() {
-        // empty constructor
-    }
+   /**
+    * Creates new instance of {@link SecurityActions}.
+    * <p/>
+    * Private constructor prevents from instantiation outside this class.
+    */
+   private SecurityActions()
+   {
+      // empty constructor
+   }
 
-    /**
-     * Loads the resources using the executing thread class loader.
-     *
-     * @param resourceName the resource name
-     *
-     * @return the loaded resource as stream
-     */
-    public static InputStream getResource(String resourceName) {
+   /**
+    * Loads the resources using the executing thread class loader.
+    *
+    * @param resourceName the resource name
+    * @return the loaded resource as stream
+    */
+   public static InputStream getResource(String resourceName)
+   {
 
-        return getThreadContextClassLoader().getResourceAsStream(resourceName);
-    }
+      return getThreadContextClassLoader().getResourceAsStream(resourceName);
+   }
 
-    /**
-     * Retrieves current thread class loader.
-     *
-     * @return the class loader
-     */
-    private static ClassLoader getThreadContextClassLoader() {
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+   /**
+    * Retrieves current thread class loader.
+    *
+    * @return the class loader
+    */
+   private static ClassLoader getThreadContextClassLoader()
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
 
-            public ClassLoader run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
+         public ClassLoader run()
+         {
+            return Thread.currentThread().getContextClassLoader();
+         }
+      });
+   }
 }
 

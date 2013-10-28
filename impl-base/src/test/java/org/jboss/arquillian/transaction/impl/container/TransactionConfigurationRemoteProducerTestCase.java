@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
-import org.jboss.arquillian.transaction.impl.client.TransactionConfigurationProducer;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.junit.Test;
 
@@ -35,29 +34,32 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionConfigurationRemoteProducerTestCase extends AbstractTestTestBase {
+public class TransactionConfigurationRemoteProducerTestCase extends AbstractTestTestBase
+{
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(TransactionConfigurationRemoteProducer.class);
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void addExtensions(List<Class<?>> extensions)
+   {
+      extensions.add(TransactionConfigurationRemoteProducer.class);
+   }
 
-    /**
-     * Tests the {@link TransactionConfigurationRemoteProducer#loadConfiguration(BeforeSuite)}
-     * method.
-     */
-    @Test
-    public void shouldCreateConfiguration() {
+   /**
+    * Tests the {@link TransactionConfigurationRemoteProducer#loadConfiguration(BeforeSuite)}
+    * method.
+    */
+   @Test
+   public void shouldCreateConfiguration()
+   {
 
-        getManager().getContext(ClassContext.class).activate(TestClass.class);
-        getManager().fire(new BeforeSuite());
+      getManager().getContext(ClassContext.class).activate(TestClass.class);
+      getManager().fire(new BeforeSuite());
 
-        TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
-        assertEquals("Invalid transaction manager name.", "testManagerName", transactionConfiguration.getManager());
+      TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
+      assertEquals("Invalid transaction manager name.", "testManagerName", transactionConfiguration.getManager());
 
-        getManager().getContext(ClassContext.class).deactivate();
-    }
+      getManager().getContext(ClassContext.class).deactivate();
+   }
 }

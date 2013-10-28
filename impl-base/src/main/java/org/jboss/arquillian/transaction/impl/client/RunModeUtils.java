@@ -17,11 +17,11 @@
  */
 package org.jboss.arquillian.transaction.impl.client;
 
-import java.lang.reflect.Method;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
+
+import java.lang.reflect.Method;
 
 /**
  * Hack to check if this is running on a embedded container.
@@ -38,7 +38,7 @@ final class RunModeUtils
 
    /**
     * Check is this should run as client.
-    *
+    * <p/>
     * Verify @Deployment.testable vs @RunAsClient on Class or Method level
     *
     * @param deployment
@@ -57,8 +57,7 @@ final class RunModeUtils
          if (testMethod.isAnnotationPresent(RunAsClient.class))
          {
             runAsClient = true;
-         }
-         else if (testClass.isAnnotationPresent(RunAsClient.class))
+         } else if (testClass.isAnnotationPresent(RunAsClient.class))
          {
             runAsClient = true;
          }
@@ -68,7 +67,7 @@ final class RunModeUtils
 
    /**
     * Check if this Container DEFAULTs to the Local protocol.
-    *
+    * <p/>
     * Hack to get around ARQ-391
     *
     * @param container

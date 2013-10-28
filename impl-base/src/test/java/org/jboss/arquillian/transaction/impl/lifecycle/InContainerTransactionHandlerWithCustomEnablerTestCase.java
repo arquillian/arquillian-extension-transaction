@@ -17,14 +17,6 @@
  */
 package org.jboss.arquillian.transaction.impl.lifecycle;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -51,291 +43,340 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests {@link TransactionHandler} class.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InContainerTransactionHandlerWithCustomEnablerTestCase extends AbstractTestTestBase {
+public class InContainerTransactionHandlerWithCustomEnablerTestCase extends AbstractTestTestBase
+{
 
-    /**
-     * Transaction provider.
-     */
-    @Mock
-    private TransactionProvider mockTransactionProvider;
+   /**
+    * Transaction provider.
+    */
+   @Mock
+   private TransactionProvider mockTransactionProvider;
 
-    /**
-     * Transaction provider.
-     */
-    @Mock
-    private TransactionContext mockTransactionContext;
+   /**
+    * Transaction provider.
+    */
+   @Mock
+   private TransactionContext mockTransactionContext;
 
-    /**
-     * Service loader.
-     */
-    @Mock
-    private ServiceLoader mockServiceLoader;
+   /**
+    * Service loader.
+    */
+   @Mock
+   private ServiceLoader mockServiceLoader;
 
-    /**
-     * Deployment.
-     */
-    @Mock
-    private Deployment mockDeployment;
+   /**
+    * Deployment.
+    */
+   @Mock
+   private Deployment mockDeployment;
 
-    /**
-     * Deployment descriptor.
-     */
-    @Mock
-    private DeploymentDescription mockDeploymentDescriptor;
+   /**
+    * Deployment descriptor.
+    */
+   @Mock
+   private DeploymentDescription mockDeploymentDescriptor;
 
-    /**
-     * The configuration.
-     */
-    private TransactionConfiguration transactionConfiguration;
+   /**
+    * The configuration.
+    */
+   private TransactionConfiguration transactionConfiguration;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(InContainerTransactionHandler.class);
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void addExtensions(List<Class<?>> extensions)
+   {
+      extensions.add(InContainerTransactionHandler.class);
+   }
 
-    /**
-     * Sets up the test environment.
-     *
-     * @throws Exception if any error occurs
-     */
-    @Before
-    public void setUp() throws Exception {
-        when(mockServiceLoader.all(TransactionEnabler.class)).thenAnswer(new Answer<Collection<TransactionEnabler>>() {
+   /**
+    * Sets up the test environment.
+    *
+    * @throws Exception if any error occurs
+    */
+   @Before
+   public void setUp() throws Exception
+   {
+      when(mockServiceLoader.all(TransactionEnabler.class)).thenAnswer(new Answer<Collection<TransactionEnabler>>()
+      {
 
-            @Override
-            public Collection<TransactionEnabler> answer(InvocationOnMock invocation) throws Throwable {
-                return new ArrayList<TransactionEnabler>() {{ add(new CustomTransactionEnabler()); }};
-            }
+         @Override
+         public Collection<TransactionEnabler> answer(InvocationOnMock invocation) throws Throwable
+         {
+            return new ArrayList<TransactionEnabler>()
+            {{
+                  add(new CustomTransactionEnabler());
+               }};
+         }
 
-        });
+      });
 
-        transactionConfiguration = new TransactionConfiguration();
-        transactionConfiguration.setManager("configurationManager");
+      transactionConfiguration = new TransactionConfiguration();
+      transactionConfiguration.setManager("configurationManager");
 
-        bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
-        bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
-        bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
-        bind(ApplicationScoped.class, Deployment.class, mockDeployment);
+      bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
+      bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
+      bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
+      bind(ApplicationScoped.class, Deployment.class, mockDeployment);
 
-        when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
-        when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
-        when(mockDeployment.isDeployed()).thenReturn(true);
-        when(mockDeploymentDescriptor.testable()).thenReturn(false);
-    }
+      when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
+      when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
+      when(mockDeployment.isDeployed()).thenReturn(true);
+      when(mockDeploymentDescriptor.testable()).thenReturn(false);
+   }
 
-    @After
-    public void disableContexts() {
-        getManager().getContext(ClassContext.class).deactivate();
-    }
+   @After
+   public void disableContexts()
+   {
+      getManager().getContext(ClassContext.class).deactivate();
+   }
 
-    @Test
-    public void should_have_transaction_disabled_when_defined_on_class_level() throws Exception {
-        // given
-        Object instance = new ClassWithGloballyDisabledTransactionSupport();
-        Method testMethod = instance.getClass().getMethod("shouldHaveTransactionDisabled");
+   @Test
+   public void should_have_transaction_disabled_when_defined_on_class_level() throws Exception
+   {
+      // given
+      Object instance = new ClassWithGloballyDisabledTransactionSupport();
+      Method testMethod = instance.getClass().getMethod("shouldHaveTransactionDisabled");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-        // then
-        verifyZeroInteractions(mockTransactionContext);
-    }
+      // then
+      verifyZeroInteractions(mockTransactionContext);
+   }
 
-    @Test
-    public void should_have_transaction_enabled_in_commit_when_defined_on_method_level_using_customized_approach() throws Exception {
-        // given
-        Object instance = new ClassWithGloballyDisabledTransactionSupport();
-        Method testMethod = instance.getClass().getMethod("shouldHaveTransactionEnabledThroughCustomAnnotation");
+   @Test
+   public void should_have_transaction_enabled_in_commit_when_defined_on_method_level_using_customized_approach() throws Exception
+   {
+      // given
+      Object instance = new ClassWithGloballyDisabledTransactionSupport();
+      Method testMethod = instance.getClass().getMethod("shouldHaveTransactionEnabledThroughCustomAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_enabled_in_commit_when_defined_on_method_level_using_customized_approach_explicitly() throws Exception {
-        // given
-        Object instance = new ClassWithGloballyDisabledTransactionSupport();
-        Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation");
+   @Test
+   public void should_have_transaction_enabled_in_commit_when_defined_on_method_level_using_customized_approach_explicitly() throws Exception
+   {
+      // given
+      Object instance = new ClassWithGloballyDisabledTransactionSupport();
+      Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_rollback_when_test_failed() throws Exception {
-        // given
-        Object instance = new ClassWithGloballyDisabledTransactionSupport();
-        Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation");
+   @Test
+   public void should_rollback_when_test_failed() throws Exception
+   {
+      // given
+      Object instance = new ClassWithGloballyDisabledTransactionSupport();
+      Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_enabled_in_rollback_when_defined_on_method_level_using_customized_approach_explicitly() throws Exception {
-        getManager().getContext(ClassContext.class).activate(ClassWithGloballyDisabledTransactionSupport.class);
+   @Test
+   public void should_have_transaction_enabled_in_rollback_when_defined_on_method_level_using_customized_approach_explicitly() throws Exception
+   {
+      getManager().getContext(ClassContext.class).activate(ClassWithGloballyDisabledTransactionSupport.class);
 
-        // given
-        Object instance = new ClassWithGloballyDisabledTransactionSupport();
-        Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInRollbackModeEnabledThroughCustomAnnotation");
+      // given
+      Object instance = new ClassWithGloballyDisabledTransactionSupport();
+      Method testMethod = instance.getClass().getMethod("shouldHaveTransactionInRollbackModeEnabledThroughCustomAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_enabled_in_rollback_when_defined_on_method_level_using_customized_approach_explicitly_and_core() throws Exception {
-        // given
-        Object instance = new OverlappingTransactionSettingsShouldRespectCore();
-        Method testMethod = instance.getClass().getMethod("shouldRollbackBasedOnCoreAnnotation");
+   @Test
+   public void should_have_transaction_enabled_in_rollback_when_defined_on_method_level_using_customized_approach_explicitly_and_core() throws Exception
+   {
+      // given
+      Object instance = new OverlappingTransactionSettingsShouldRespectCore();
+      Method testMethod = instance.getClass().getMethod("shouldRollbackBasedOnCoreAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_disabled_when_defined_on_method_level_using_customized_approach_explicitly_and_core() throws Exception {
-        // given
-        Object instance = new OverlappingTransactionSettingsShouldRespectCore();
-        Method testMethod = instance.getClass().getMethod("shouldBeDisabledBasedOnCoreAnnotation");
+   @Test
+   public void should_have_transaction_disabled_when_defined_on_method_level_using_customized_approach_explicitly_and_core() throws Exception
+   {
+      // given
+      Object instance = new OverlappingTransactionSettingsShouldRespectCore();
+      Method testMethod = instance.getClass().getMethod("shouldBeDisabledBasedOnCoreAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
-        verify(mockTransactionProvider, never()).rollbackTransaction(any(TransactionalTest.class));
-        verify(mockTransactionProvider, never()).commitTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
+      verify(mockTransactionProvider, never()).rollbackTransaction(any(TransactionalTest.class));
+      verify(mockTransactionProvider, never()).commitTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_commit_transaction_when_globally_defined_on_class_level_using_custom_annotation() throws Exception {
-        // given
-        Object instance = new TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation();
-        Method testMethod = instance.getClass().getMethod("shouldBeCommited");
+   @Test
+   public void should_commit_transaction_when_globally_defined_on_class_level_using_custom_annotation() throws Exception
+   {
+      // given
+      Object instance = new TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation();
+      Method testMethod = instance.getClass().getMethod("shouldBeCommited");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_disabed_when_globally_enabled_on_class_level_using_custom_annotation_but_disabled_through_core_annotation() throws Exception {
-        // given
-        Object instance = new TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation();
-        Method testMethod = instance.getClass().getMethod("shouldBeDisabledBasedOnCoreAnnotation");
+   @Test
+   public void should_have_transaction_disabed_when_globally_enabled_on_class_level_using_custom_annotation_but_disabled_through_core_annotation() throws Exception
+   {
+      // given
+      Object instance = new TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation();
+      Method testMethod = instance.getClass().getMethod("shouldBeDisabledBasedOnCoreAnnotation");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
+   }
 
-    @Test
-    public void should_have_transaction_disabled_when_not_defined() throws Exception {
-        // given
-        Object instance = new TransactionSupportShouldBeDisabled();
-        Method testMethod = instance.getClass().getMethod("shouldBeDisabled");
+   @Test
+   public void should_have_transaction_disabled_when_not_defined() throws Exception
+   {
+      // given
+      Object instance = new TransactionSupportShouldBeDisabled();
+      Method testMethod = instance.getClass().getMethod("shouldBeDisabled");
 
-        // when
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
-        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+      // when
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-        // then
-        verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
-        verify(mockTransactionProvider, never()).rollbackTransaction(any(TransactionalTest.class));
-        verify(mockTransactionProvider, never()).commitTransaction(any(TransactionalTest.class));
-    }
+      // then
+      verify(mockTransactionProvider, never()).beginTransaction(any(TransactionalTest.class));
+      verify(mockTransactionProvider, never()).rollbackTransaction(any(TransactionalTest.class));
+      verify(mockTransactionProvider, never()).commitTransaction(any(TransactionalTest.class));
+   }
 
-    // -- Test doubles
+   // -- Test doubles
 
-    @SuppressWarnings("unused")
-    @Transactional(value = TransactionMode.DISABLED)
-    private static class ClassWithGloballyDisabledTransactionSupport {
+   @SuppressWarnings("unused")
+   @Transactional(value = TransactionMode.DISABLED)
+   private static class ClassWithGloballyDisabledTransactionSupport
+   {
 
-        public void shouldHaveTransactionDisabled() {}
+      public void shouldHaveTransactionDisabled()
+      {
+      }
 
-        @CustomTransactional
-        public void shouldHaveTransactionEnabledThroughCustomAnnotation() {}
+      @CustomTransactional
+      public void shouldHaveTransactionEnabledThroughCustomAnnotation()
+      {
+      }
 
-        @CustomTransactional(TransactionMode.COMMIT)
-        public void shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation() {}
+      @CustomTransactional(TransactionMode.COMMIT)
+      public void shouldHaveTransactionInCommitModeEnabledThroughCustomAnnotation()
+      {
+      }
 
-        @CustomTransactional(TransactionMode.ROLLBACK)
-        public void shouldHaveTransactionInRollbackModeEnabledThroughCustomAnnotation() {}
-    }
+      @CustomTransactional(TransactionMode.ROLLBACK)
+      public void shouldHaveTransactionInRollbackModeEnabledThroughCustomAnnotation()
+      {
+      }
+   }
 
-    @SuppressWarnings("unused")
-    private static class OverlappingTransactionSettingsShouldRespectCore {
+   @SuppressWarnings("unused")
+   private static class OverlappingTransactionSettingsShouldRespectCore
+   {
 
-        @Transactional(value = TransactionMode.ROLLBACK)
-        @CustomTransactional(TransactionMode.COMMIT)
-        public void shouldRollbackBasedOnCoreAnnotation() {}
+      @Transactional(value = TransactionMode.ROLLBACK)
+      @CustomTransactional(TransactionMode.COMMIT)
+      public void shouldRollbackBasedOnCoreAnnotation()
+      {
+      }
 
-        @Transactional(value = TransactionMode.DISABLED)
-        @CustomTransactional(TransactionMode.ROLLBACK)
-        public void shouldBeDisabledBasedOnCoreAnnotation() {}
-    }
+      @Transactional(value = TransactionMode.DISABLED)
+      @CustomTransactional(TransactionMode.ROLLBACK)
+      public void shouldBeDisabledBasedOnCoreAnnotation()
+      {
+      }
+   }
 
-    @SuppressWarnings("unused")
-    @CustomTransactional(TransactionMode.COMMIT)
-    private static class TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation {
+   @SuppressWarnings("unused")
+   @CustomTransactional(TransactionMode.COMMIT)
+   private static class TransactionalSupportEnabledOnClassLevelUsingAdditionalAnnotation
+   {
 
-        public void shouldBeCommited() {}
+      public void shouldBeCommited()
+      {
+      }
 
-        @Transactional(value = TransactionMode.DISABLED)
-        public void shouldBeDisabledBasedOnCoreAnnotation() {}
-    }
+      @Transactional(value = TransactionMode.DISABLED)
+      public void shouldBeDisabledBasedOnCoreAnnotation()
+      {
+      }
+   }
 
-    @SuppressWarnings("unused")
-    private static class TransactionSupportShouldBeDisabled {
+   @SuppressWarnings("unused")
+   private static class TransactionSupportShouldBeDisabled
+   {
 
-        public void shouldBeDisabled() {}
+      public void shouldBeDisabled()
+      {
+      }
 
-    }
+   }
 
 }
