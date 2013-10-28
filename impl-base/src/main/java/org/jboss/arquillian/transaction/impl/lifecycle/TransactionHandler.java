@@ -42,7 +42,7 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
  * transactions before execution of the test method and compensating it
  * afterwards, based on the strategy defined by {@link Transactional}
  * annotation.
- * <p/>
+ * <br />
  * The implementation delegates to registered {@link TransactionProvider} in the
  * current context to perform actual operation. If no provider has been found or
  * multiple classes has been registered then
@@ -77,7 +77,7 @@ public abstract class TransactionHandler
 
    public abstract boolean isTransactionSupported(TestEvent testEvent);
 
-   public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest)
+   public void startTransactionBeforeTest(@Observes(precedence = 1000) Before beforeTest)
    {
 
       if (isTransactionEnabled(beforeTest))
@@ -94,12 +94,11 @@ public abstract class TransactionHandler
       }
    }
 
-   public void endTransactionAfterTest(@Observes(precedence = 50) After afterTest)
+   public void endTransactionAfterTest(@Observes(precedence = 1000) After afterTest)
    {
 
       if (isTransactionEnabled(afterTest))
       {
-
          try
          {
             lifecycleEvent.fire(new BeforeTransactionEnded());
@@ -110,12 +109,14 @@ public abstract class TransactionHandler
             if (rollbackRequired(afterTest))
             {
                transactionProvider.rollbackTransaction(transactionalTest);
-            } else
+            }
+            else
             {
                transactionProvider.commitTransaction(transactionalTest);
             }
 
-         } finally
+         }
+         finally
          {
             lifecycleEvent.fire(new AfterTransactionEnded());
             transactionContextInstance.get().destroy();
