@@ -62,7 +62,8 @@ public class JtaTransactionProvider implements TransactionProvider
          {
             transaction.begin();
          }
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
          throw new RuntimeException("Unable to start transaction", e);
       }
@@ -84,7 +85,8 @@ public class JtaTransactionProvider implements TransactionProvider
          {
             transaction.commit();
          }
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
          throw new RuntimeException("Unable to commit the transaction.", e);
       }
@@ -99,7 +101,8 @@ public class JtaTransactionProvider implements TransactionProvider
       try
       {
          userTransactionInstance.get().rollback();
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
          throw new RuntimeException("Could not rollback the transaction.", e);
       }
@@ -118,8 +121,7 @@ public class JtaTransactionProvider implements TransactionProvider
 
       try
       {
-
-         Context context = jndiContextInstance.get();
+         final Context context = jndiContextInstance.get();
 
          if (context == null)
          {
@@ -127,10 +129,11 @@ public class JtaTransactionProvider implements TransactionProvider
          }
 
          return (UserTransaction) context.lookup(jndiName);
-      } catch (NamingException e)
+      }
+      catch (NamingException e)
       {
 
-         throw new RuntimeException("Failed obtaining transaction.", e);
+         throw new RuntimeException("Failed obtaining transaction using [" + jndiName + "]. Is it registered under this name in your container?", e);
       }
    }
 
