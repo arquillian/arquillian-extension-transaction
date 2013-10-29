@@ -25,15 +25,17 @@ import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionRemoteExtension implements RemoteLoadableExtension {
+public class TransactionRemoteExtension implements RemoteLoadableExtension
+{
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void register(ExtensionBuilder builder) {
-        builder.context(TransactionContextImpl.class);
-        builder.observer(TransactionConfigurationRemoteProducer.class);
-        builder.observer(InContainerTransactionHandler.class);
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void register(ExtensionBuilder builder)
+   {
+      builder.context(TransactionContextImpl.class);
+      builder.observer(TransactionConfigurationRemoteProducer.class);
+      builder.observer(InContainerTransactionHandler.class);
+   }
 }

@@ -31,25 +31,27 @@ import org.jboss.arquillian.transaction.impl.configuration.TransactionConfigurat
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionConfigurationRemoteProducer {
+public class TransactionConfigurationRemoteProducer
+{
 
-    /**
-     * The extension configuration.
-     */
-    @Inject
-    @ApplicationScoped
-    private InstanceProducer<TransactionConfiguration> configurationInstance;
+   /**
+    * The extension configuration.
+    */
+   @Inject
+   @ApplicationScoped
+   private InstanceProducer<TransactionConfiguration> configurationInstance;
 
-    /**
-     * Loads the configuration from the properties file.
-     *
-     * @param beforeSuite the event fired before execution of test suite
-     */
-    public void loadConfiguration(@Observes BeforeSuite beforeSuite) {
+   /**
+    * Loads the configuration from the properties file.
+    *
+    * @param beforeSuite the event fired before execution of test suite
+    */
+   public void loadConfiguration(@Observes BeforeSuite beforeSuite)
+   {
 
-        TransactionConfiguration configuration = TransactionConfigurationConverter.importFromProperties(
-                SecurityActions.getResource("arquillian-transaction-configuration.properties"));
+      TransactionConfiguration configuration = TransactionConfigurationConverter.importFromProperties(
+            SecurityActions.getResource("arquillian-transaction-configuration.properties"));
 
-        configurationInstance.set(configuration);
-    }
+      configurationInstance.set(configuration);
+   }
 }

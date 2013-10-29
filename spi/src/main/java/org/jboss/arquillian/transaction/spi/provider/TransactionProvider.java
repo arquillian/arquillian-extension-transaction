@@ -25,26 +25,27 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public interface TransactionProvider {
+public interface TransactionProvider
+{
 
-    /**
-     * Begins new transaction.
-     *
-     * @param test the transactional test
-     */
-    void beginTransaction(TransactionalTest test);
+   /**
+    * Begins new transaction.
+    *
+    * @param test the transactional test
+    */
+   void beginTransaction(TransactionalTest test);
 
-    /**
-     * Commits current transaction.
-     *
-     * @param test the transactional test
-     */
-    void commitTransaction(TransactionalTest test);
+   /**
+    * Commits current transaction.
+    *
+    * @param test the transactional test
+    */
+   void commitTransaction(TransactionalTest test);
 
-    /**
-     * Rollbacks current transaction.
-     *
-     * @param test the transactional test
-     */
-    void rollbackTransaction(TransactionalTest test);
+   /**
+    * Rollbacks current transaction.
+    *
+    * @param test the transactional test
+    */
+   void rollbackTransaction(TransactionalTest test);
 }

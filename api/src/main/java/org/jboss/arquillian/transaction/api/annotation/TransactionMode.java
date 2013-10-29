@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -18,11 +18,10 @@
 package org.jboss.arquillian.transaction.api.annotation;
 
 /**
- * Available transaction modes used for transactional wrapper of
+ * Available transaction modes used for controlling transaction behaviour per
  * test methods.
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
- *
  */
 public enum TransactionMode
 {
@@ -31,8 +30,8 @@ public enum TransactionMode
     */
    ROLLBACK,
    /**
-    * Commit transaction after test execution.
-    * Default behavior.
+    * Commit transaction after test execution. <br/>
+    * <b>Default behavior.</b>
     */
    COMMIT,
    /**

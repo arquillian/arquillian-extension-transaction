@@ -17,11 +17,6 @@
  */
 package org.jboss.arquillian.transaction.impl.container;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
 import org.junit.Before;
@@ -30,48 +25,54 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests {@link TransactionRemoteExtension} class.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionRemoteExtensionTestCase {
+public class TransactionRemoteExtensionTestCase
+{
 
-    /**
-     * Represents the instance of tested class.
-     */
-    private TransactionRemoteExtension instance;
+   /**
+    * Represents the instance of tested class.
+    */
+   private TransactionRemoteExtension instance;
 
-    /**
-     * Extension builder.
-     */
-    @Mock
-    private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
+   /**
+    * Extension builder.
+    */
+   @Mock
+   private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
 
-    /**
-     * Sets up the test environment.
-     */
-    @Before
-    public void setUp() {
+   /**
+    * Sets up the test environment.
+    */
+   @Before
+   public void setUp()
+   {
 
-        instance = new TransactionRemoteExtension();
-    }
+      instance = new TransactionRemoteExtension();
+   }
 
-    /**
-     * Tests the {@link TransactionRemoteExtension#register(LoadableExtension.ExtensionBuilder)} method.
-     */
-    @Test
-    public void shouldRegisterExtensionClasses() {
+   /**
+    * Tests the {@link TransactionRemoteExtension#register(LoadableExtension.ExtensionBuilder)} method.
+    */
+   @Test
+   public void shouldRegisterExtensionClasses()
+   {
 
-        when(mockExtensionBuilder.context(any(Class.class))).thenReturn(mockExtensionBuilder);
-        when(mockExtensionBuilder.observer(any(Class.class))).thenReturn(mockExtensionBuilder);
+      when(mockExtensionBuilder.context(any(Class.class))).thenReturn(mockExtensionBuilder);
+      when(mockExtensionBuilder.observer(any(Class.class))).thenReturn(mockExtensionBuilder);
 
-        instance.register(mockExtensionBuilder);
+      instance.register(mockExtensionBuilder);
 
-        verify(mockExtensionBuilder).context(TransactionContextImpl.class);
-        verify(mockExtensionBuilder).observer(TransactionConfigurationRemoteProducer.class);
-        verify(mockExtensionBuilder).observer(InContainerTransactionHandler.class);
-        verifyNoMoreInteractions(mockExtensionBuilder);
-    }
+      verify(mockExtensionBuilder).context(TransactionContextImpl.class);
+      verify(mockExtensionBuilder).observer(TransactionConfigurationRemoteProducer.class);
+      verify(mockExtensionBuilder).observer(InContainerTransactionHandler.class);
+      verifyNoMoreInteractions(mockExtensionBuilder);
+   }
 }

@@ -24,12 +24,10 @@ import org.jboss.arquillian.core.spi.event.Event;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionEvent implements Event {
+public class TransactionEvent implements Event
+{
 
-    /**
-     * Crates new instance of {@link TransactionEvent} class.
-     */
-    public TransactionEvent() {
-        // empty constructor
-    }
+   public TransactionEvent()
+   {
+   }
 }

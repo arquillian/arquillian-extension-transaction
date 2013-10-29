@@ -20,7 +20,7 @@ package org.jboss.arquillian.transaction.spi.context;
 import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
 
 /**
- * Context bound to the current executing transaction.
+ * Context bound to currently executing transaction.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @see org.jboss.arquillian.transaction.spi.annotation.TransactionScope

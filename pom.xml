@@ -30,14 +30,13 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.0.2.Final</version.arquillian_core>
+        <version.arquillian_core>1.1.1.Final</version.arquillian_core>
 
         <!-- Tests -->
-        <version.junit>4.10</version.junit>
+        <version.junit>4.11</version.junit>
         <version.fest.assert>1.4</version.fest.assert>
-        <version.mockito>1.9.0</version.mockito>
-        <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
-        <version.jboss_spec>3.0.0.Final</version.jboss_spec>
+        <version.mockito>1.9.5</version.mockito>
+        <version.jboss_spec>3.0.2.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
 
         <!-- override from parent -->
