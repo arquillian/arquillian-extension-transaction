@@ -18,23 +18,22 @@
 
 package org.jboss.arquillian.transaction.impl.client;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.context.ClassContext;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests {@link TransactionConfigurationProducer} class.
@@ -43,45 +42,47 @@ import static org.junit.Assert.assertEquals;
  */
 public class TransactionConfigurationProducerTestCase extends AbstractTestTestBase
 {
+    /**
+     * Used to fake a loadConfiguration event in the test.
+     */
+    private ArquillianDescriptor descriptor;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(TransactionConfigurationProducer.class);
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addExtensions(List<Class<?>> extensions)
+    {
+        extensions.add(TransactionConfigurationProducer.class);
+    }
 
-   /**
-    * Sets up the test environment.
-    *
-    * @throws Exception if any error occurs
-    */
-   @Before
-   public void setUp() throws Exception
-   {
+    /**
+     * Sets up the test environment.
+     *
+     * @throws Exception if any error occurs
+     */
+    @Before
+    public void setUp() throws Exception
+    {
 
-      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+        descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
             new FileInputStream(new File("src/test/resources", "arquillian.xml")));
+    }
 
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
-   }
+    /**
+     * Tests the {@link TransactionConfigurationProducer#loadConfiguration(ArquillianDescriptor)} method.
+     */
+    @Test
+    public void shouldCreateConfiguration()
+    {
 
-   /**
-    * Tests the {@link TransactionConfigurationProducer#loadConfiguration(BeforeSuite)} method.
-    */
-   @Test
-   public void shouldCreateConfiguration()
-   {
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().bindAndFire(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
-      getManager().fire(new BeforeSuite());
+        TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
+        assertEquals("Wrongly mapped transaction manager name.", "testManagerName", transactionConfiguration.getManager());
+        assertEquals("Wrongly mapped transaction default mode.", TransactionMode.DISABLED, transactionConfiguration.getTransactionDefaultMode());
 
-      TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
-      assertEquals("Wrongly mapped transaction manager name.", "testManagerName", transactionConfiguration.getManager());
-      assertEquals("Wrongly mapped transaction default mode.", TransactionMode.DISABLED, transactionConfiguration.getTransactionDefaultMode());
-
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 }
