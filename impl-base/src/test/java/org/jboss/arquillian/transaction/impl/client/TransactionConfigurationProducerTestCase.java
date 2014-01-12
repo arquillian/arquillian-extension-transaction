@@ -22,7 +22,6 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.context.ClassContext;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
@@ -43,6 +42,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class TransactionConfigurationProducerTestCase extends AbstractTestTestBase
 {
+   /**
+    * Used to fake a loadConfiguration event in the test.
+    */
+   private ArquillianDescriptor descriptor;
 
    /**
     * {@inheritDoc}
@@ -62,21 +65,19 @@ public class TransactionConfigurationProducerTestCase extends AbstractTestTestBa
    public void setUp() throws Exception
    {
 
-      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+      descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
             new FileInputStream(new File("src/test/resources", "arquillian.xml")));
-
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
    }
 
    /**
-    * Tests the {@link TransactionConfigurationProducer#loadConfiguration(BeforeSuite)} method.
+    * Tests the {@link TransactionConfigurationProducer#loadConfiguration(ArquillianDescriptor)} method.
     */
    @Test
    public void shouldCreateConfiguration()
    {
 
       getManager().getContext(ClassContext.class).activate(TestClass.class);
-      getManager().fire(new BeforeSuite());
+      getManager().bindAndFire(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
       TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
       assertEquals("Wrongly mapped transaction manager name.", "testManagerName", transactionConfiguration.getManager());

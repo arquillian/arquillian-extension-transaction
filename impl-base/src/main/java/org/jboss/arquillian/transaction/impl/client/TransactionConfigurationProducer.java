@@ -20,12 +20,10 @@ package org.jboss.arquillian.transaction.impl.client;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
-import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 
@@ -46,23 +44,18 @@ public class TransactionConfigurationProducer
 
    public static final String DEFAULT_TRANSACTION_MODE_PROPERTY_NAME = "transactionDefaultMode";
 
-   @Inject
-   private Instance<ArquillianDescriptor> descriptor;
-
-   @Inject
-   @ApplicationScoped
+   @Inject @ApplicationScoped
    private InstanceProducer<TransactionConfiguration> configurationInstance;
 
    /**
-    * Loads the extension configuration before the test suite is being run.
+    * Loads the extension configuration as soon as possible, i.e. in the load configuration bootstrapping phase.
     *
-    * @param beforeSuiteEvent the event fired before execution of the test suite
+    * @param descriptor the event fired during load configuration (before the test suite events are fired)
     */
-   public void loadConfiguration(@Observes BeforeSuite beforeSuiteEvent)
+   public void loadConfiguration(@Observes ArquillianDescriptor descriptor)
    {
 
-      TransactionConfiguration config = getConfiguration(descriptor.get());
-
+      TransactionConfiguration config = getConfiguration(descriptor);
       configurationInstance.set(config);
    }
 
@@ -96,19 +89,15 @@ public class TransactionConfigurationProducer
     */
    private Map<String, String> getExtensionProperties(ArquillianDescriptor arquillianDescriptor)
    {
-
       for (ExtensionDef extensionDef : arquillianDescriptor.getExtensions())
       {
-
          if (TRANSACTION_EXTENSION.equals(extensionDef.getExtensionName()))
          {
-
             return extensionDef.getExtensionProperties();
          }
       }
 
       return Collections.emptyMap();
    }
-
 
 }
