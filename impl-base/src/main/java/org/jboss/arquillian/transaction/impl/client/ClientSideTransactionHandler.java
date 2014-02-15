@@ -21,6 +21,7 @@ import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
@@ -33,9 +34,13 @@ public class ClientSideTransactionHandler extends TransactionHandler
    @Inject
    private Instance<Container> containerInstance;
 
+   @Inject
+   private Instance<ApplicationContext> applicationContextInstance;
+
    @Override
    public boolean isTransactionSupported(TestEvent testEvent)
    {
+
       boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(), testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
       boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
 

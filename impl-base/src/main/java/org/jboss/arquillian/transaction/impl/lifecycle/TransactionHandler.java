@@ -21,6 +21,7 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -67,7 +68,7 @@ public abstract class TransactionHandler
    private Instance<TransactionConfiguration> configurationInstance;
 
    @Inject
-   Event<TransactionEvent> lifecycleEvent;
+   private Event<TransactionEvent> lifecycleEvent;
 
    @Inject
    private Instance<TransactionContext> transactionContextInstance;
@@ -77,7 +78,7 @@ public abstract class TransactionHandler
 
    public abstract boolean isTransactionSupported(TestEvent testEvent);
 
-   public void startTransactionBeforeTest(@Observes(precedence = 1000) Before beforeTest)
+   public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest)
    {
 
       if (isTransactionEnabled(beforeTest))
@@ -94,17 +95,30 @@ public abstract class TransactionHandler
       }
    }
 
-   public void endTransactionAfterTest(@Observes(precedence = 1000) After afterTest)
+   public void endTransactionAfterTest(@Observes(precedence = -1) EventContext<After> afterTestContext)
    {
+      try
+      {
+         endTransaction(afterTestContext.getEvent());
+      }
+      finally
+      {
+         afterTestContext.proceed();
+      }
+   }
 
+   // -- Private methods
+
+   private void endTransaction(After afterTest)
+   {
       if (isTransactionEnabled(afterTest))
       {
          try
          {
             lifecycleEvent.fire(new BeforeTransactionEnded());
 
-            TransactionProvider transactionProvider = getTransactionProvider();
-            TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
+            final TransactionProvider transactionProvider = getTransactionProvider();
+            final TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
 
             if (rollbackRequired(afterTest))
             {
@@ -114,7 +128,6 @@ public abstract class TransactionHandler
             {
                transactionProvider.commitTransaction(transactionalTest);
             }
-
          }
          finally
          {
@@ -123,8 +136,6 @@ public abstract class TransactionHandler
          }
       }
    }
-
-   // -- Private methods
 
    /**
     * Returns whether the transaction is enabled for the current test.
