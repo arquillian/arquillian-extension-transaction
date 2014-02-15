@@ -30,7 +30,7 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.1.1.Final</version.arquillian_core>
+        <version.arquillian_core>1.1.2.Final</version.arquillian_core>
 
         <!-- Tests -->
         <version.junit>4.11</version.junit>
