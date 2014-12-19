@@ -167,8 +167,12 @@ public abstract class TransactionHandler
     */
    private boolean testRequiresRollbackDueToFailure()
    {
-      final Status actualStatus = testResultInstance.get().getStatus();
-      return TestResult.Status.FAILED.equals(actualStatus);
+      if(testResultInstance.get() != null)
+      {
+          final Status actualStatus = testResultInstance.get().getStatus();
+          return TestResult.Status.FAILED.equals(actualStatus);
+      }
+      return true;
    }
 
    /**
