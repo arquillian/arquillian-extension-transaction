@@ -99,11 +99,11 @@ public abstract class TransactionHandler
    {
       try
       {
-         endTransaction(afterTestContext.getEvent());
+    	  afterTestContext.proceed();
       }
       finally
       {
-         afterTestContext.proceed();
+    	  endTransaction(afterTestContext.getEvent());
       }
    }
 
