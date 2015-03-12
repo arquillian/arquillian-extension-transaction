@@ -104,7 +104,7 @@ public class TransactionConfigurationConverter
 
       String value = properties.getProperty(propertyName);
 
-      if ("".equals(value.trim()))
+      if (value == null || "".equals(value.trim()))
       {
          return null;
       }
