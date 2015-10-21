@@ -15,7 +15,7 @@
     <!-- Artifact Configuration -->
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-transaction-parent</artifactId>
-    <version>1.0.2.Final-SNAPSHOT</version>
+    <version>1.0.2.Final</version>
     <packaging>pom</packaging>
 
     <name>Arquillian Transaction Extension: Parent</name>
@@ -138,4 +138,8 @@
         </dependencies>
     </dependencyManagement>
 
+
+  <scm>
+    <tag>1.0.2.Final</tag>
+  </scm>
 </project>
