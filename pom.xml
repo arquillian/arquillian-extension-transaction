@@ -30,12 +30,12 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.1.2.Final</version.arquillian_core>
+        <version.arquillian_core>1.1.10.Final</version.arquillian_core>
 
         <!-- Tests -->
-        <version.junit>4.11</version.junit>
+        <version.junit>4.12</version.junit>
         <version.fest.assert>1.4</version.fest.assert>
-        <version.mockito>1.9.5</version.mockito>
+        <version.mockito>1.10.19</version.mockito>
         <version.jboss_spec>3.0.2.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
 
