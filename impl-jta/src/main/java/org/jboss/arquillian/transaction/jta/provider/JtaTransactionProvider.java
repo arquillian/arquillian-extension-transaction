@@ -30,12 +30,6 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-/**
- * JTA transaction provider.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
- */
 public class JtaTransactionProvider implements TransactionProvider
 {
 
@@ -56,7 +50,7 @@ public class JtaTransactionProvider implements TransactionProvider
    {
       try
       {
-         UserTransaction transaction = getUserTransaction(transactionalTest);
+         final UserTransaction transaction = getUserTransaction(transactionalTest);
          userTransactionInstance.set(transaction);
          if (isTransactionNotActive(transaction))
          {
@@ -81,7 +75,8 @@ public class JtaTransactionProvider implements TransactionProvider
          if (isTransactionMarkedToRollback(transaction))
          {
             transaction.rollback();
-         } else
+         }
+         else
          {
             transaction.commit();
          }
@@ -100,7 +95,12 @@ public class JtaTransactionProvider implements TransactionProvider
    {
       try
       {
-         userTransactionInstance.get().rollback();
+         final UserTransaction userTransaction = userTransactionInstance.get();
+
+         if (userTransaction != null)
+         {
+            userTransaction.rollback();
+         }
       }
       catch (Exception e)
       {
@@ -117,7 +117,7 @@ public class JtaTransactionProvider implements TransactionProvider
    private UserTransaction getUserTransaction(TransactionalTest transactionalTest)
    {
 
-      String jndiName = getJtaTransactionJndiName(transactionalTest);
+      final String jndiName = getJtaTransactionJndiName(transactionalTest);
 
       try
       {
@@ -139,14 +139,12 @@ public class JtaTransactionProvider implements TransactionProvider
 
    private String getJtaTransactionJndiName(TransactionalTest transactionalTest)
    {
-      String jndiName = DEFAULT_TRANSACTION_JNDI_NAME;
-
       if (transactionalTest.getManager() != null)
       {
-         jndiName = transactionalTest.getManager();
+         return transactionalTest.getManager();
       }
 
-      return jndiName;
+      return DEFAULT_TRANSACTION_JNDI_NAME;
    }
 
    private boolean isTransactionNotActive(final UserTransaction transaction) throws SystemException

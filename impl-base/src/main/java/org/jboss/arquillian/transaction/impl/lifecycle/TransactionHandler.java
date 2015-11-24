@@ -283,7 +283,8 @@ public abstract class TransactionHandler
             throw new TransactionProviderNotFoundException("Transaction provider for given test case has not been found.");
          }
          return transactionProvider;
-      } catch (IllegalStateException e)
+      }
+      catch (IllegalStateException e)
       {
          throw new TransactionProviderNotFoundException("More then one transaction provider has been specified.", e);
       }
