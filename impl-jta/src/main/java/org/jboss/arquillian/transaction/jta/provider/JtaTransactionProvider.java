@@ -100,7 +100,11 @@ public class JtaTransactionProvider implements TransactionProvider
    {
       try
       {
-         userTransactionInstance.get().rollback();
+         UserTransaction userTransaction = userTransactionInstance.get();
+
+         if (userTransaction != null) {
+            userTransaction.rollback();
+         }
       }
       catch (Exception e)
       {
