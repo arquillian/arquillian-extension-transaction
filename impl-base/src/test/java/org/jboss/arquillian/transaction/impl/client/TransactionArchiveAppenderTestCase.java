@@ -28,7 +28,7 @@ import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtensio
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionProviderNotFoundException;
-import org.jboss.arquillian.transaction.impl.test.TransactionalTestImpl;
+import org.jboss.arquillian.transaction.impl.test.DefaultTransactionalTest;
 import org.jboss.arquillian.transaction.spi.annotation.TransactionScope;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
 import org.jboss.arquillian.transaction.spi.event.AfterTransactionEnded;
@@ -58,31 +58,18 @@ import static org.junit.Assert.assertTrue;
 public class TransactionArchiveAppenderTestCase extends AbstractTestTestBase
 {
 
-   /**
-    * Represents the instance of tested class.
-    */
    private TransactionArchiveAppender instance;
-
-   /**
-    * The configuration.
-    */
    private TransactionConfiguration transactionConfiguration;
 
-   /**
-    * Represents the list of required classes.
-    */
    private final static List<Class<?>> REQUIRED_CLASSES = Arrays.asList(
          TransactionRemoteExtension.class, TransactionContextImpl.class, TransactionHandler.class,
-         TransactionProviderNotFoundException.class, TransactionalTestImpl.class, Transactional.class,
+         TransactionProviderNotFoundException.class, DefaultTransactionalTest.class, Transactional.class,
          TransactionMode.class, TransactionScope.class, TransactionContext.class,
          AfterTransactionEnded.class, AfterTransactionStarted.class, BeforeTransactionEnded.class,
          BeforeTransactionStarted.class, TransactionProvider.class, TransactionalTest.class,
          TransactionConfiguration.class, TransactionConfigurationConverter.class,
          TransactionConfigurationRemoteProducer.class);
 
-   /**
-    * Sets up the test environment.
-    */
    @Before
    public void setUp()
    {
@@ -95,11 +82,6 @@ public class TransactionArchiveAppenderTestCase extends AbstractTestTestBase
       getManager().inject(instance);
    }
 
-   /**
-    * Tests the {@link TransactionArchiveAppender#createAuxiliaryArchive()} method.
-    *
-    * @throws Exception if any error occurs
-    */
    @Test
    public void shouldPackageAllExtensionClasses() throws Exception
    {

@@ -23,11 +23,10 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
-import org.jboss.arquillian.transaction.impl.configuration.TransactionConfigurationConverter;
 import org.jboss.arquillian.transaction.impl.container.TransactionRemoteExtension;
 import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
-import org.jboss.arquillian.transaction.impl.test.TransactionalTestImpl;
+import org.jboss.arquillian.transaction.impl.test.DefaultTransactionalTest;
 import org.jboss.arquillian.transaction.spi.annotation.TransactionScope;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
 import org.jboss.arquillian.transaction.spi.event.BeforeTransactionStarted;
@@ -37,6 +36,8 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+
+import static org.jboss.arquillian.transaction.impl.configuration.TransactionConfigurationConverter.exportToProperties;
 
 /**
  * An archive appender that packages all required classes for this extension.
@@ -59,23 +60,21 @@ public class TransactionArchiveAppender implements AuxiliaryArchiveAppender
    public Archive<?> createAuxiliaryArchive()
    {
 
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction.jar");
+      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction.jar");
 
       bundleApi(archive);
-
+      bundleImplementation(archive);
       bundleSpi(archive);
 
-      bundleImplementation(archive);
+      addExtensionProperties(archive);
 
-      // adds the extension properties
-      archive.addAsResource(new StringAsset(
-            TransactionConfigurationConverter.exportToProperties(configurationInstance.get())),
-            "arquillian-transaction-configuration.properties");
-
-      // registers the remote extension
       archive.addAsServiceProvider(RemoteLoadableExtension.class, TransactionRemoteExtension.class);
 
       return archive;
+   }
+
+   private void addExtensionProperties(JavaArchive archive) {
+      archive.addAsResource(new StringAsset(exportToProperties(configurationInstance.get())), "arquillian-transaction-configuration.properties");
    }
 
    private void bundleImplementation(JavaArchive archive)
@@ -84,7 +83,7 @@ public class TransactionArchiveAppender implements AuxiliaryArchiveAppender
       archive.addPackage(TransactionConfiguration.class.getPackage());
       archive.addPackage(TransactionContextImpl.class.getPackage());
       archive.addPackage(TransactionHandler.class.getPackage());
-      archive.addPackage(TransactionalTestImpl.class.getPackage());
+      archive.addPackage(DefaultTransactionalTest.class.getPackage());
    }
 
    private void bundleSpi(JavaArchive archive)

@@ -39,14 +39,6 @@ public class TransactionConfiguration
     */
    private TransactionMode transactionDefaultMode = TransactionMode.COMMIT;
 
-   /**
-    * Creates new instance of {@link TransactionConfiguration} class.
-    */
-   public TransactionConfiguration()
-   {
-      // empty constructor
-   }
-
    public String getManager()
    {
       return manager;

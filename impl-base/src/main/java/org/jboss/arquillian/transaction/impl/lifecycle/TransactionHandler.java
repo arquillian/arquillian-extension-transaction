@@ -31,7 +31,7 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
-import org.jboss.arquillian.transaction.impl.test.TransactionalTestImpl;
+import org.jboss.arquillian.transaction.impl.test.DefaultTransactionalTest;
 import org.jboss.arquillian.transaction.spi.context.TransactionContext;
 import org.jboss.arquillian.transaction.spi.event.*;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
@@ -89,7 +89,7 @@ public abstract class TransactionHandler
 
          lifecycleEvent.fire(new BeforeTransactionStarted());
 
-         getTransactionProvider().beginTransaction(new TransactionalTestImpl(getTransactionManager(beforeTest)));
+         getTransactionProvider().beginTransaction(new DefaultTransactionalTest(getTransactionManager(beforeTest)));
 
          lifecycleEvent.fire(new AfterTransactionStarted());
       }
@@ -118,7 +118,7 @@ public abstract class TransactionHandler
             lifecycleEvent.fire(new BeforeTransactionEnded());
 
             final TransactionProvider transactionProvider = getTransactionProvider();
-            final TransactionalTest transactionalTest = new TransactionalTestImpl(getTransactionManager(afterTest));
+            final TransactionalTest transactionalTest = new DefaultTransactionalTest(getTransactionManager(afterTest));
 
             if (rollbackRequired(afterTest))
             {
@@ -167,7 +167,7 @@ public abstract class TransactionHandler
     */
    private boolean testRequiresRollbackDueToFailure()
    {
-      if(testResultInstance.get() != null)
+      if (testResultInstance.get() != null)
       {
           final Status actualStatus = testResultInstance.get().getStatus();
           return TestResult.Status.FAILED.equals(actualStatus);

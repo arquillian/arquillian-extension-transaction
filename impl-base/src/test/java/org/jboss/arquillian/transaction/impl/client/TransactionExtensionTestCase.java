@@ -38,30 +38,11 @@ import static org.mockito.Mockito.*;
 public class TransactionExtensionTestCase
 {
 
-   /**
-    * Represents the instance of tested class.
-    */
-   private TransactionExtension instance;
+   private final TransactionExtension instance = new TransactionExtension();
 
-   /**
-    * Extension builder.
-    */
    @Mock
    private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
 
-   /**
-    * Sets up the test environment.
-    */
-   @Before
-   public void setUp()
-   {
-
-      instance = new TransactionExtension();
-   }
-
-   /**
-    * Tests the {@link TransactionExtension#register(LoadableExtension.ExtensionBuilder)} method.
-    */
    @Test
    public void shouldRegisterExtensionServices()
    {

@@ -29,24 +29,12 @@ import static org.junit.Assert.assertEquals;
 public class TransactionProviderNotFoundExceptionTestCase
 {
 
-   /**
-    * The error message used for testing.
-    */
    private static final String MESSAGE = "MESSAGE";
 
-   /**
-    * The error message used for testing.
-    */
    private static final Throwable CAUSE = new Throwable();
 
-   /**
-    * Represents the instance of tested class.
-    */
    private TransactionProviderNotFoundException instance;
 
-   /**
-    * Tests if the {@link TransactionProviderNotFoundException} extends the {@link RuntimeException}.
-    */
    @Test
    public void shouldExtendRuntimeException()
    {
@@ -55,9 +43,6 @@ public class TransactionProviderNotFoundExceptionTestCase
             TransactionProviderNotFoundException.class.getSuperclass());
    }
 
-   /**
-    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException()} constructor.
-    */
    @Test
    public void shouldCreateExceptionInstance()
    {
@@ -65,9 +50,6 @@ public class TransactionProviderNotFoundExceptionTestCase
       instance = new TransactionProviderNotFoundException();
    }
 
-   /**
-    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String)} constructor.
-    */
    @Test
    public void shouldCreateExceptionInstanceWithDetailedErrorMessage()
    {
@@ -77,10 +59,6 @@ public class TransactionProviderNotFoundExceptionTestCase
       assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
    }
 
-   /**
-    * Tests the {@link TransactionProviderNotFoundException#TransactionProviderNotFoundException(String, Throwable)}
-    * constructor.
-    */
    @Test
    public void shouldCreateExceptionInstanceWithDetailedErrorMessageAndInnerCause()
    {

@@ -68,9 +68,9 @@ public class TransactionConfigurationProducer
    private TransactionConfiguration getConfiguration(ArquillianDescriptor arquillianDescriptor)
    {
 
-      Map<String, String> extensionProperties = getExtensionProperties(arquillianDescriptor);
+      final Map<String, String> extensionProperties = getExtensionProperties(arquillianDescriptor);
 
-      TransactionConfiguration configuration = new TransactionConfiguration();
+      final TransactionConfiguration configuration = new TransactionConfiguration();
       configuration.setManager(extensionProperties.get(MANAGER_PROPERTY_NAME));
       final String transactionDefaultMode = extensionProperties.get(DEFAULT_TRANSACTION_MODE_PROPERTY_NAME);
       if (transactionDefaultMode != null && transactionDefaultMode.length() > 0)

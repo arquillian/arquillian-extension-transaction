@@ -9,8 +9,4 @@ package org.jboss.arquillian.transaction.spi.event;
  */
 public class AfterTransactionStarted extends TransactionEvent
 {
-
-   public AfterTransactionStarted()
-   {
-   }
 }

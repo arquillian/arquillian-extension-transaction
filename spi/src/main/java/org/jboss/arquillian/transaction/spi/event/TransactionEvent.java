@@ -26,8 +26,4 @@ import org.jboss.arquillian.core.spi.event.Event;
  */
 public class TransactionEvent implements Event
 {
-
-   public TransactionEvent()
-   {
-   }
 }

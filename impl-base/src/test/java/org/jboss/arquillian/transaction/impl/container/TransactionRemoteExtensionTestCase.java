@@ -28,39 +28,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests {@link TransactionRemoteExtension} class.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionRemoteExtensionTestCase
 {
 
-   /**
-    * Represents the instance of tested class.
-    */
-   private TransactionRemoteExtension instance;
 
-   /**
-    * Extension builder.
-    */
+   private final TransactionRemoteExtension instance = new TransactionRemoteExtension();
+
    @Mock
    private LoadableExtension.ExtensionBuilder mockExtensionBuilder;
 
-   /**
-    * Sets up the test environment.
-    */
-   @Before
-   public void setUp()
-   {
-
-      instance = new TransactionRemoteExtension();
-   }
-
-   /**
-    * Tests the {@link TransactionRemoteExtension#register(LoadableExtension.ExtensionBuilder)} method.
-    */
    @Test
    public void shouldRegisterExtensionClasses()
    {

@@ -52,11 +52,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests {@link TransactionHandler} class.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
 @RunWith(MockitoJUnitRunner.class)
 public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase
 {

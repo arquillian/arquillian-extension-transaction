@@ -26,9 +26,4 @@ package org.jboss.arquillian.transaction.spi.event;
  */
 public class AfterTransactionEnded extends TransactionEvent
 {
-
-   public AfterTransactionEnded()
-   {
-      // empty constructor
-   }
 }

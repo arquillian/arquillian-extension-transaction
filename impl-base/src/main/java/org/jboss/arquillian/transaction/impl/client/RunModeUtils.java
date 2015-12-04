@@ -51,8 +51,8 @@ final class RunModeUtils
       boolean runAsClient = true;
       if (deployment != null)
       {
-         runAsClient = deployment.getDescription().testable() ? false : true;
-         runAsClient = deployment.isDeployed() ? runAsClient : true;
+         runAsClient = !deployment.getDescription().testable();
+         runAsClient = !deployment.isDeployed() || runAsClient;
 
          if (testMethod.isAnnotationPresent(RunAsClient.class))
          {
@@ -80,10 +80,6 @@ final class RunModeUtils
       {
          return false;
       }
-      if ("Local".equals(container.getDeployableContainer().getDefaultProtocol().getName()))
-      {
-         return true;
-      }
-      return false;
+      return "Local".equals(container.getDeployableContainer().getDefaultProtocol().getName());
    }
 }

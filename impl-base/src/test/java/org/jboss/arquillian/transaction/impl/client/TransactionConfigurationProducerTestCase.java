@@ -42,36 +42,22 @@ import static org.junit.Assert.assertEquals;
  */
 public class TransactionConfigurationProducerTestCase extends AbstractTestTestBase
 {
-   /**
-    * Used to fake a loadConfiguration event in the test.
-    */
    private ArquillianDescriptor descriptor;
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    protected void addExtensions(List<Class<?>> extensions)
    {
       extensions.add(TransactionConfigurationProducer.class);
    }
 
-   /**
-    * Sets up the test environment.
-    *
-    * @throws Exception if any error occurs
-    */
    @Before
-   public void setUp() throws Exception
+   public void load_arquillian_configuration() throws Exception
    {
 
       descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
             new FileInputStream(new File("src/test/resources", "arquillian.xml")));
    }
 
-   /**
-    * Tests the {@link TransactionConfigurationProducer#loadConfiguration(ArquillianDescriptor)} method.
-    */
    @Test
    public void shouldCreateConfiguration()
    {

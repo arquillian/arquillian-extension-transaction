@@ -29,11 +29,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Tests {@link TransactionConfigurationRemoteProducer} class.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
 public class TransactionConfigurationRemoteProducerTestCase extends AbstractTestTestBase
 {
 
@@ -46,10 +41,6 @@ public class TransactionConfigurationRemoteProducerTestCase extends AbstractTest
       extensions.add(TransactionConfigurationRemoteProducer.class);
    }
 
-   /**
-    * Tests the {@link TransactionConfigurationRemoteProducer#loadConfiguration(BeforeSuite)}
-    * method.
-    */
    @Test
    public void shouldCreateConfiguration()
    {

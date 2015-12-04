@@ -29,9 +29,6 @@ import org.jboss.arquillian.transaction.impl.context.TransactionContextImpl;
 public class TransactionExtension implements LoadableExtension
 {
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void register(ExtensionBuilder builder)
    {

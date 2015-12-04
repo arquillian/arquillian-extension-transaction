@@ -26,8 +26,4 @@ package org.jboss.arquillian.transaction.spi.event;
  */
 public class BeforeTransactionStarted extends TransactionEvent
 {
-
-   public BeforeTransactionStarted()
-   {
-   }
 }

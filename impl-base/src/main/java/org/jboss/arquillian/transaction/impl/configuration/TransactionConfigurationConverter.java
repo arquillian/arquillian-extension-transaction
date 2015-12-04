@@ -52,10 +52,12 @@ public class TransactionConfigurationConverter
          properties.store(outputStream, "arquillian-transaction-configuration");
 
          return outputStream.toString();
-      } catch (IOException e)
+      }
+      catch (IOException e)
       {
          throw new RuntimeException("Could not export the configuration..", e);
-      } finally
+      }
+      finally
       {
          close(outputStream);
       }
@@ -72,10 +74,10 @@ public class TransactionConfigurationConverter
       try
       {
 
-         Properties properties = new Properties();
+         final Properties properties = new Properties();
          properties.load(inputStream);
 
-         TransactionConfiguration transactionConfiguration = new TransactionConfiguration();
+         final TransactionConfiguration transactionConfiguration = new TransactionConfiguration();
          transactionConfiguration.setManager(getPropertyValue(properties, "manager"));
          final String transactionDefaultMode = getPropertyValue(properties, "transactionDefaultMode");
          if (transactionDefaultMode != null && transactionDefaultMode.length() > 0)
@@ -83,10 +85,12 @@ public class TransactionConfigurationConverter
             transactionConfiguration.setTransactionDefaultMode(TransactionMode.valueOf(transactionDefaultMode));
          }
          return transactionConfiguration;
-      } catch (IOException e)
+      }
+      catch (IOException e)
       {
          throw new RuntimeException("Could not import the configuration.", e);
-      } finally
+      }
+      finally
       {
          close(inputStream);
       }
@@ -102,7 +106,7 @@ public class TransactionConfigurationConverter
    private static String getPropertyValue(Properties properties, String propertyName)
    {
 
-      String value = properties.getProperty(propertyName);
+      final String value = properties.getProperty(propertyName);
 
       if (value == null || "".equals(value.trim()))
       {
@@ -142,7 +146,8 @@ public class TransactionConfigurationConverter
          try
          {
             resource.close();
-         } catch (IOException e)
+         }
+         catch (IOException e)
          {
             throw new RuntimeException("Unable to close output stream.", e);
          }

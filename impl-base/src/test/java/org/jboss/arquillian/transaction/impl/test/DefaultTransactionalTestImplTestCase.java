@@ -17,41 +17,34 @@
  */
 package org.jboss.arquillian.transaction.impl.test;
 
-import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * The default implementation of {@link TransactionalTest}.
+ * Tests {@link DefaultTransactionalTest} class.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionalTestImpl implements TransactionalTest
+public class DefaultTransactionalTestImplTestCase
 {
 
    /**
-    * Represents the name of the manager.
+    * Represents the instance of tested class.
     */
-   private String manager;
+   private DefaultTransactionalTest instance;
 
    /**
-    * Creates new instance of {@link TransactionalTestImpl} class.
-    *
-    * @param manager the manger
+    * Tests {@link DefaultTransactionalTest#getManager()} method.</p>
     */
-   public TransactionalTestImpl(String manager)
+   @Test
+   public void shouldReturnManager()
    {
 
-      this.manager = manager;
-   }
+      String manager = "manager";
 
-   /**
-    * Retrieves the manager
-    *
-    * @return the manager
-    */
-   @Override
-   public String getManager()
-   {
+      instance = new DefaultTransactionalTest(manager);
 
-      return manager;
+      assertEquals("Invalid property value.", manager, instance.getManager());
    }
 }

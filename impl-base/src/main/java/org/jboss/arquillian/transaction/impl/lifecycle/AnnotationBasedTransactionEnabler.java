@@ -22,7 +22,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
 
-
 /**
  * Resolves transactional support using annotation
  * based model.

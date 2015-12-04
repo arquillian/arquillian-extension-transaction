@@ -24,34 +24,12 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Tests {@link TransactionContextImpl} class.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
 public class TransactionContextImplTestCase
 {
 
-   /**
-    * Represents the instance of tested class.
-    */
-   private TransactionContextImpl instance;
 
-   /**
-    * Sets up the test environment.
-    *
-    * @throws Exception if any error occurs
-    */
-   @Before
-   public void setUp() throws Exception
-   {
+   private final TransactionContextImpl instance = new TransactionContextImpl();
 
-      instance = new TransactionContextImpl();
-   }
-
-   /**
-    * Tests the {@link TransactionContextImpl#getScope()} method.
-    */
    @Test
    public void shouldHandleTransactionScope()
    {
@@ -59,13 +37,9 @@ public class TransactionContextImplTestCase
       assertEquals("Incorrect scope has been returned.", TransactionScope.class, instance.getScope());
    }
 
-   /**
-    * Tests the {@link TransactionContextImpl#createNewObjectStore()} method.
-    */
    @Test
    public void shouldCreateObjectStore()
    {
-
       assertNotNull("Method returned null result.", instance.createNewObjectStore());
    }
 }

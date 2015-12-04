@@ -51,64 +51,33 @@ import java.util.List;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests {@link TransactionHandler} class.
- *
- * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- */
 @RunWith(MockitoJUnitRunner.class)
 public class InContainerTransactionHandlerWithCustomEnablerTestCase extends AbstractTestTestBase
 {
 
-   /**
-    * Transaction provider.
-    */
    @Mock
    private TransactionProvider mockTransactionProvider;
 
-   /**
-    * Transaction provider.
-    */
    @Mock
    private TransactionContext mockTransactionContext;
 
-   /**
-    * Service loader.
-    */
    @Mock
    private ServiceLoader mockServiceLoader;
 
-   /**
-    * Deployment.
-    */
    @Mock
    private Deployment mockDeployment;
 
-   /**
-    * Deployment descriptor.
-    */
    @Mock
    private DeploymentDescription mockDeploymentDescriptor;
 
-   /**
-    * The configuration.
-    */
    private TransactionConfiguration transactionConfiguration;
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    protected void addExtensions(List<Class<?>> extensions)
    {
       extensions.add(InContainerTransactionHandler.class);
    }
 
-   /**
-    * Sets up the test environment.
-    *
-    * @throws Exception if any error occurs
-    */
    @Before
    public void setUp() throws Exception
    {

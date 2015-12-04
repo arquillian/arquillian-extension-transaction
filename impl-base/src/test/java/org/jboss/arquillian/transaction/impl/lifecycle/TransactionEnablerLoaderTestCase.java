@@ -33,9 +33,6 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-/**
- * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
- */
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionEnablerLoaderTestCase
 {

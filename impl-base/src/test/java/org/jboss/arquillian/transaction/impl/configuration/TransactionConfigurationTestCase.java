@@ -19,7 +19,7 @@
 package org.jboss.arquillian.transaction.impl.configuration;
 
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.impl.test.TransactionalTestImpl;
+import org.jboss.arquillian.transaction.impl.test.DefaultTransactionalTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class TransactionConfigurationTestCase
    }
 
    /**
-    * Tests {@link TransactionalTestImpl#getManager()} method.</p>
+    * Tests {@link DefaultTransactionalTest#getManager()} method.</p>
     */
    @Test
    public void shouldReturnManager()
