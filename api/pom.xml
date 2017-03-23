@@ -1,13 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <!-- Parent -->
   <parent>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-transaction-parent</artifactId>
     <version>1.0.4.Final-SNAPSHOT</version>
   </parent>
 
-  <!-- Model Version -->
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>arquillian-transaction-api</artifactId>
@@ -15,23 +13,5 @@
 
   <name>Arquillian Transaction Extension: API</name>
   <description>API for Arquillian Transaction Support</description>
-
-  <!-- Properties -->
-  <properties>
-
-  </properties>
-
-  <!-- Licenses -->
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-
-  <!-- Dependencies -->
-  <dependencies>
-
-  </dependencies>
 
 </project>

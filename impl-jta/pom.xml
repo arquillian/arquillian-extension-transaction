@@ -2,27 +2,22 @@
 <!-- vi:ts=2:sw=2:expandtab: -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <!-- Parent -->
   <parent>
     <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-transaction-parent</artifactId>
     <version>1.0.4.Final-SNAPSHOT</version>
   </parent>
 
-  <!-- Model Version -->
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- Artifact Configuration -->
   <artifactId>arquillian-transaction-jta</artifactId>
   <name>Arquillian Transaction Extension: JTA</name>
   <description>JTA implementation for transaction extension</description>
 
-  <!-- Properties -->
   <properties>
     <version.jta>1.1</version.jta>
   </properties>
 
-  <!-- Dependencies -->
   <dependencies>
 
     <dependency>
