@@ -89,6 +89,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase
       bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
       bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
       bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
+      bind(TestScoped.class, TransactionProvider.class, mockTransactionProvider);
       bind(ApplicationScoped.class, Deployment.class, mockDeployment);
 
       when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);

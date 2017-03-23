@@ -25,6 +25,7 @@ import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
+import org.jboss.arquillian.transaction.impl.configuration.TransactionConfigurationProducer;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Before;
 import org.junit.Test;

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.jboss.arquillian.transaction.impl.client;
+package org.jboss.arquillian.transaction.impl.configuration;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
@@ -25,7 +25,6 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.impl.configuration.TransactionConfiguration;
 
 import java.util.Collections;
 import java.util.Map;

@@ -23,11 +23,11 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
+import org.jboss.arquillian.transaction.impl.lifecycle.ModeChecker;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
 public class ClientSideTransactionHandler extends TransactionHandler
 {
-
    @Inject
    private Instance<Deployment> deploymentInstance;
 
@@ -40,11 +40,7 @@ public class ClientSideTransactionHandler extends TransactionHandler
    @Override
    public boolean isTransactionSupported(TestEvent testEvent)
    {
-
-      boolean runAsClient = RunModeUtils.isRunAsClient(deploymentInstance.get(), testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
-      boolean isLocal = RunModeUtils.isLocalContainer(containerInstance.get());
-
-      return runAsClient || isLocal;
+      return new ModeChecker(deploymentInstance.get(), containerInstance.get()).isClientMode(testEvent);
    }
 
 }

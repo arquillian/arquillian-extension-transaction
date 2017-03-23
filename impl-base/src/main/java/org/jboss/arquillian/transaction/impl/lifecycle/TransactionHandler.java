@@ -76,6 +76,9 @@ public abstract class TransactionHandler
    @Inject
    private Instance<TestResult> testResultInstance;
 
+   @Inject
+   private Instance<TransactionProvider> transactionProviderInstance;
+
    public abstract boolean isTransactionSupported(TestEvent testEvent);
 
    public void startTransactionBeforeTest(@Observes(precedence = 10) Before beforeTest)
@@ -89,7 +92,7 @@ public abstract class TransactionHandler
 
          lifecycleEvent.fire(new BeforeTransactionStarted());
 
-         getTransactionProvider().beginTransaction(new DefaultTransactionalTest(getTransactionManager(beforeTest)));
+         transactionProviderInstance.get().beginTransaction(new DefaultTransactionalTest(getTransactionManager(beforeTest)));
 
          lifecycleEvent.fire(new AfterTransactionStarted());
       }
@@ -117,7 +120,7 @@ public abstract class TransactionHandler
          {
             lifecycleEvent.fire(new BeforeTransactionEnded());
 
-            final TransactionProvider transactionProvider = getTransactionProvider();
+            final TransactionProvider transactionProvider = transactionProviderInstance.get();
             final TransactionalTest transactionalTest = new DefaultTransactionalTest(getTransactionManager(afterTest));
 
             if (rollbackRequired(afterTest))
@@ -264,30 +267,6 @@ public abstract class TransactionHandler
          transactionManager = configurationInstance.get().getManager();
       }
       return transactionManager;
-   }
-
-   /**
-    * Retrieves the {@link TransactionProvider} registered in current context.
-    *
-    * @return the transaction provider
-    * @throws TransactionProviderNotFoundException
-    *          if no provider could be found or there are multiple providers registered.
-    */
-   private TransactionProvider getTransactionProvider()
-   {
-      try
-      {
-         final TransactionProvider transactionProvider = serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
-         if (transactionProvider == null)
-         {
-            throw new TransactionProviderNotFoundException("Transaction provider for given test case has not been found.");
-         }
-         return transactionProvider;
-      }
-      catch (IllegalStateException e)
-      {
-         throw new TransactionProviderNotFoundException("More then one transaction provider has been specified.", e);
-      }
    }
 
 }
