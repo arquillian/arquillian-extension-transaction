@@ -23,23 +23,22 @@ package org.jboss.arquillian.transaction.api.annotation;
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public enum TransactionMode
-{
-   /**
-    * Rollback transaction after every test.
-    */
-   ROLLBACK,
-   /**
-    * Commit transaction after test execution. <br/>
-    * <b>Default behavior.</b>
-    */
-   COMMIT,
-   /**
-    * Instructs extension to not use transactions for tests execution.
-    */
-   DISABLED,
-   /**
-    * Determined using externalized configuration. COMMIT by default.
-    */
-   DEFAULT;
+public enum TransactionMode {
+    /**
+     * Rollback transaction after every test.
+     */
+    ROLLBACK,
+    /**
+     * Commit transaction after test execution. <br/>
+     * <b>Default behavior.</b>
+     */
+    COMMIT,
+    /**
+     * Instructs extension to not use transactions for tests execution.
+     */
+    DISABLED,
+    /**
+     * Determined using externalized configuration. COMMIT by default.
+     */
+    DEFAULT
 }

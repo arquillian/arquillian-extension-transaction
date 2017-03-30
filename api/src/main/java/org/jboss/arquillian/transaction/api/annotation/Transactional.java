@@ -43,15 +43,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(value = {TYPE, METHOD})
 @Retention(value = RUNTIME)
 @Inherited
-public @interface Transactional
-{
+public @interface Transactional {
 
-   TransactionMode value() default TransactionMode.DEFAULT;
+    TransactionMode value() default TransactionMode.DEFAULT;
 
-   /**
-    * The optional name of the manager to be used for handling transaction for
-    * given test case or method.
-    */
-   String manager() default "";
-
+    /**
+     * The optional name of the manager to be used for handling transaction for
+     * given test case or method.
+     */
+    String manager() default "";
 }

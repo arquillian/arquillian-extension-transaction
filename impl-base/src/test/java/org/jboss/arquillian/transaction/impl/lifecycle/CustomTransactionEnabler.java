@@ -28,38 +28,32 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class CustomTransactionEnabler implements TransactionEnabler
-{
+public class CustomTransactionEnabler implements TransactionEnabler {
 
-   @Override
-   public boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestClass().isAnnotationPresent(CustomTransactional.class);
-   }
+    @Override
+    public boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().isAnnotationPresent(CustomTransactional.class);
+    }
 
-   @Override
-   public boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestMethod().isAnnotationPresent(CustomTransactional.class);
-   }
+    @Override
+    public boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().isAnnotationPresent(CustomTransactional.class);
+    }
 
-   @Override
-   public TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestClass().getAnnotation(CustomTransactional.class).value();
-   }
+    @Override
+    public TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().getAnnotation(CustomTransactional.class).value();
+    }
 
-   @Override
-   public TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestMethod().getAnnotation(CustomTransactional.class).value();
-   }
+    @Override
+    public TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().getAnnotation(CustomTransactional.class).value();
+    }
 
-   @Target(value = {TYPE, METHOD})
-   @Retention(value = RUNTIME)
-   @Inherited
-   public static @interface CustomTransactional
-   {
-      TransactionMode value() default TransactionMode.COMMIT;
-   }
+    @Target(value = {TYPE, METHOD})
+    @Retention(value = RUNTIME)
+    @Inherited
+    public static @interface CustomTransactional {
+        TransactionMode value() default TransactionMode.COMMIT;
+    }
 }

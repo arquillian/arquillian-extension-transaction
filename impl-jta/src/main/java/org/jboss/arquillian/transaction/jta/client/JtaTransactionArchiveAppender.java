@@ -30,23 +30,21 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class JtaTransactionArchiveAppender implements AuxiliaryArchiveAppender
-{
+public class JtaTransactionArchiveAppender implements AuxiliaryArchiveAppender {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Archive<?> createAuxiliaryArchive()
-   {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Archive<?> createAuxiliaryArchive() {
 
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction-impl-jta.jar");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction-impl-jta.jar");
 
-      archive.addPackage(JtaTransactionRemoteExtension.class.getPackage());
-      archive.addPackage(JtaTransactionProvider.class.getPackage());
+        archive.addPackage(JtaTransactionRemoteExtension.class.getPackage());
+        archive.addPackage(JtaTransactionProvider.class.getPackage());
 
-      archive.addAsServiceProvider(RemoteLoadableExtension.class, JtaTransactionRemoteExtension.class);
+        archive.addAsServiceProvider(RemoteLoadableExtension.class, JtaTransactionRemoteExtension.class);
 
-      return archive;
-   }
+        return archive;
+    }
 }

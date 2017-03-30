@@ -53,382 +53,356 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase
-{
+public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
 
-   @Mock
-   private TransactionProvider mockTransactionProvider;
+    @Mock
+    private TransactionProvider mockTransactionProvider;
 
-   @Mock
-   private TransactionContext mockTransactionContext;
+    @Mock
+    private TransactionContext mockTransactionContext;
 
-   @Mock
-   private ServiceLoader mockServiceLoader;
+    @Mock
+    private ServiceLoader mockServiceLoader;
 
-   @Mock
-   private Deployment mockDeployment;
+    @Mock
+    private Deployment mockDeployment;
 
-   @Mock
-   private DeploymentDescription mockDeploymentDescriptor;
+    @Mock
+    private DeploymentDescription mockDeploymentDescriptor;
 
-   private TransactionConfiguration transactionConfiguration;
+    private TransactionConfiguration transactionConfiguration;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ClientSideTransactionHandler.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ClientSideTransactionHandler.class);
+    }
 
-   @Before
-   public void setUp() throws Exception
-   {
+    @Before
+    public void setUp() throws Exception {
 
-      transactionConfiguration = new TransactionConfiguration();
-      transactionConfiguration.setManager("configurationManager");
+        transactionConfiguration = new TransactionConfiguration();
+        transactionConfiguration.setManager("configurationManager");
 
-      bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
-      bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
-      bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
-      bind(TestScoped.class, TransactionProvider.class, mockTransactionProvider);
-      bind(ApplicationScoped.class, Deployment.class, mockDeployment);
+        bind(ApplicationScoped.class, ServiceLoader.class, mockServiceLoader);
+        bind(ApplicationScoped.class, TransactionContext.class, mockTransactionContext);
+        bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
+        bind(TestScoped.class, TransactionProvider.class, mockTransactionProvider);
+        bind(ApplicationScoped.class, Deployment.class, mockDeployment);
 
-      when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
-      when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
-      when(mockDeployment.isDeployed()).thenReturn(true);
-      when(mockDeploymentDescriptor.testable()).thenReturn(false);
-   }
+        when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(mockTransactionProvider);
+        when(mockDeployment.getDescription()).thenReturn(mockDeploymentDescriptor);
+        when(mockDeployment.isDeployed()).thenReturn(true);
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
+    }
 
-   @Test
-   public void shouldStartTransaction() throws Exception
-   {
+    @Test
+    public void shouldStartTransaction() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("defaultTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("defaultTest");
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      // checks if the transaction context has been created
-      verify(mockTransactionContext).activate();
+        // checks if the transaction context has been created
+        verify(mockTransactionContext).activate();
 
-      // verifies that the transaction has been started
-      verify(mockTransactionProvider).beginTransaction(any(TransactionalTest.class));
+        // verifies that the transaction has been started
+        verify(mockTransactionProvider).beginTransaction(any(TransactionalTest.class));
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldStartTransactionWithTestMethodManager() throws Exception
-   {
+    @Test
+    public void shouldStartTransactionWithTestMethodManager() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestManagerClass();
-      Method testMethod = instance.getClass().getMethod("testWithManager");
+        Object instance = new TestManagerClass();
+        Method testMethod = instance.getClass().getMethod("testWithManager");
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      // checks if the transaction context has been created
-      verify(mockTransactionContext).activate();
+        // checks if the transaction context has been created
+        verify(mockTransactionContext).activate();
 
-      ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
+        ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
 
-      // verifies that the transaction has been started
-      verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
+        // verifies that the transaction has been started
+        verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
 
-      // checks if the manager name has been correctly retrieved
-      assertEquals("The manager name is invalid.", "testMethodManager", argumentCaptor.getValue().getManager());
+        // checks if the manager name has been correctly retrieved
+        assertEquals("The manager name is invalid.", "testMethodManager", argumentCaptor.getValue().getManager());
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldStartTransactionWithTestCaseManager() throws Exception
-   {
+    @Test
+    public void shouldStartTransactionWithTestCaseManager() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestManagerClass();
-      Method testMethod = instance.getClass().getMethod("testWithoutManager");
+        Object instance = new TestManagerClass();
+        Method testMethod = instance.getClass().getMethod("testWithoutManager");
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      // checks if the transaction context has been created
-      verify(mockTransactionContext).activate();
+        // checks if the transaction context has been created
+        verify(mockTransactionContext).activate();
 
-      ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
+        ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
 
-      // verifies that the transaction has been started
-      verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
+        // verifies that the transaction has been started
+        verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
 
-      // checks if the manager name has been correctly retrieved
-      assertEquals("The manager name is invalid.", "testCaseManager", argumentCaptor.getValue().getManager());
+        // checks if the manager name has been correctly retrieved
+        assertEquals("The manager name is invalid.", "testCaseManager", argumentCaptor.getValue().getManager());
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldStartTransactionWithConfigurationManager() throws Exception
-   {
+    @Test
+    public void shouldStartTransactionWithConfigurationManager() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("defaultTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("defaultTest");
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      // checks if the transaction context has been created
-      verify(mockTransactionContext).activate();
+        // checks if the transaction context has been created
+        verify(mockTransactionContext).activate();
 
-      ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
+        ArgumentCaptor<TransactionalTest> argumentCaptor = ArgumentCaptor.forClass(TransactionalTest.class);
 
-      // verifies that the transaction has been started
-      verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
+        // verifies that the transaction has been started
+        verify(mockTransactionProvider).beginTransaction(argumentCaptor.capture());
 
-      // checks if the manager name has been correctly retrieved
-      assertEquals("The manager name is invalid.", "configurationManager", argumentCaptor.getValue().getManager());
+        // checks if the manager name has been correctly retrieved
+        assertEquals("The manager name is invalid.", "configurationManager", argumentCaptor.getValue().getManager());
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldNotStartTransaction() throws Exception
-   {
+    @Test
+    public void shouldNotStartTransaction() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("disabledTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("disabledTest");
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      // checks if the transaction context hasn't been created
-      verifyZeroInteractions(mockTransactionContext);
+        // checks if the transaction context hasn't been created
+        verifyZeroInteractions(mockTransactionContext);
 
-      // verifies that the transaction hasn't been started
-      verifyZeroInteractions(mockTransactionProvider);
+        // verifies that the transaction hasn't been started
+        verifyZeroInteractions(mockTransactionProvider);
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldRollbackTransaction() throws Exception
-   {
+    @Test
+    public void shouldRollbackTransaction() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("rollbackTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("rollbackTest");
 
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-      // checks if the transaction context has been disposed
-      verify(mockTransactionContext).destroy();
+        // checks if the transaction context has been disposed
+        verify(mockTransactionContext).destroy();
 
-      // verifies that the transaction has been rollback
-      verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
+        // verifies that the transaction has been rollback
+        verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldRollbackTransactionOnFail() throws Exception
-   {
+    @Test
+    public void shouldRollbackTransactionOnFail() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("failTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("failTest");
 
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-      // checks if the transaction context has been disposed
-      verify(mockTransactionContext).destroy();
+        // checks if the transaction context has been disposed
+        verify(mockTransactionContext).destroy();
 
-      // verifies that the transaction has been rollback
-      verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
+        // verifies that the transaction has been rollback
+        verify(mockTransactionProvider).rollbackTransaction(any(TransactionalTest.class));
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldCommitTransaction() throws Exception
-   {
+    @Test
+    public void shouldCommitTransaction() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("commitTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
 
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-      // checks if the transaction context has been disposed
-      verify(mockTransactionContext).destroy();
+        // checks if the transaction context has been disposed
+        verify(mockTransactionContext).destroy();
 
-      // verifies that the transaction has been committed
-      verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+        // verifies that the transaction has been committed
+        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
-   @Test
-   public void shouldCommitTransactionWhenDefaultModeUsed() throws Exception
-   {
+    @Test
+    public void shouldCommitTransactionWhenDefaultModeUsed() throws Exception {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("defaultTest");
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("defaultTest");
 
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
-      // checks if the transaction context has been disposed
-      verify(mockTransactionContext).destroy();
+        // checks if the transaction context has been disposed
+        verify(mockTransactionContext).destroy();
 
-      // verifies that the transaction has been committed
-      verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
+        // verifies that the transaction has been committed
+        verify(mockTransactionProvider).commitTransaction(any(TransactionalTest.class));
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 
+    @Test
+    public void shouldActivateTransactionWhenRunAsClient() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-   @Test
-   public void shouldActivateTransactionWhenRunAsClient() throws Exception
-   {
-      when(mockDeploymentDescriptor.testable()).thenReturn(false);
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("commitTest");
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
 
-      assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
-   }
+    @Test
+    public void shouldActivateTransactionWhenLocalProtocol() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(true);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-   @Test
-   public void shouldActivateTransactionWhenLocalProtocol() throws Exception
-   {
-      when(mockDeploymentDescriptor.testable()).thenReturn(true);
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        Container container = Mockito.mock(Container.class);
+        DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
+        when(container.getDeployableContainer()).thenReturn(deployableContainer);
+        when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
 
-      Container container = Mockito.mock(Container.class);
-      DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
-      when(container.getDeployableContainer()).thenReturn(deployableContainer);
-      when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
+        bind(ApplicationScoped.class, Container.class, container);
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
 
-      bind(ApplicationScoped.class, Container.class, container);
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("commitTest");
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
 
-      assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
-   }
+    @Test
+    public void shouldActivateTransactionWhenRunAsClientAndLocalProtocol() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(false);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-   @Test
-   public void shouldActivateTransactionWhenRunAsClientAndLocalProtocol() throws Exception
-   {
-      when(mockDeploymentDescriptor.testable()).thenReturn(false);
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        Container container = Mockito.mock(Container.class);
+        DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
+        when(container.getDeployableContainer()).thenReturn(deployableContainer);
+        when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
 
-      Container container = Mockito.mock(Container.class);
-      DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
-      when(container.getDeployableContainer()).thenReturn(deployableContainer);
-      when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription("Local"));
+        bind(ApplicationScoped.class, Container.class, container);
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
 
-      bind(ApplicationScoped.class, Container.class, container);
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("commitTest");
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
 
-      assertEventFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
-   }
+    @Test
+    public void shouldNotActivateTransactionWhenNotRunAsClientOnClientSide() throws Exception {
+        when(mockDeploymentDescriptor.testable()).thenReturn(true);
+        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
 
-   @Test
-   public void shouldNotActivateTransactionWhenNotRunAsClientOnClientSide() throws Exception
-   {
-      when(mockDeploymentDescriptor.testable()).thenReturn(true);
-      bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("commitTest");
 
-      Object instance = new TestClass();
-      Method testMethod = instance.getClass().getMethod("commitTest");
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
 
-      getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+        assertEventNotFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
+    }
 
-      assertEventNotFiredInContext(BeforeTransactionStarted.class, ApplicationContext.class);
-   }
+    /**
+     * Imitates a test case. Used for testing different conditions.
+     *
+     * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+     */
+    @Transactional
+    @SuppressWarnings("unused")
+    private static class TestClass {
 
-   /**
-    * Imitates a test case. Used for testing different conditions.
-    *
-    * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
-    */
-   @Transactional
-   @SuppressWarnings("unused")
-   private static class TestClass
-   {
+        public void defaultTest() throws Exception {
+            // empty test
+        }
 
-      public void defaultTest() throws Exception
-      {
-         // empty test
-      }
+        @Transactional(value = TransactionMode.COMMIT)
+        public void commitTest() throws Exception {
+            // empty test
+        }
 
-      @Transactional(value = TransactionMode.COMMIT)
-      public void commitTest() throws Exception
-      {
-         // empty test
-      }
+        @Transactional(value = TransactionMode.ROLLBACK)
+        public void rollbackTest() throws Exception {
+            // empty test
+        }
 
-      @Transactional(value = TransactionMode.ROLLBACK)
-      public void rollbackTest() throws Exception
-      {
-         // empty test
-      }
+        public void failTest() throws Exception {
+            // empty test
+        }
 
-      public void failTest() throws Exception
-      {
-         // empty test
-      }
+        @Transactional(value = TransactionMode.DISABLED)
+        public void disabledTest() throws Exception {
+            // empty test
+        }
+    }
 
-      @Transactional(value = TransactionMode.DISABLED)
-      public void disabledTest() throws Exception
-      {
-         // empty test
-      }
-   }
+    /**
+     * Imitated a test case. Used for testing different conditions.
+     *
+     * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+     */
+    @Transactional(manager = "testCaseManager")
+    @SuppressWarnings("unused")
+    private static class TestManagerClass {
 
-   /**
-    * Imitated a test case. Used for testing different conditions.
-    *
-    * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
-    */
-   @Transactional(manager = "testCaseManager")
-   @SuppressWarnings("unused")
-   private static class TestManagerClass
-   {
+        @Transactional(manager = "testMethodManager")
+        public void testWithManager() throws Exception {
+            // empty test
+        }
 
-      @Transactional(manager = "testMethodManager")
-      public void testWithManager() throws Exception
-      {
-         // empty test
-      }
-
-      @Transactional
-      public void testWithoutManager() throws Exception
-      {
-         // empty test
-      }
-   }
+        @Transactional
+        public void testWithoutManager() throws Exception {
+            // empty test
+        }
+    }
 }

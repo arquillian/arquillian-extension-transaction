@@ -17,13 +17,11 @@
  */
 package org.jboss.arquillian.transaction.spi.event;
 
-
 /**
  * Event fired before new transaction is going to start.
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class BeforeTransactionStarted extends TransactionEvent
-{
+public class BeforeTransactionStarted extends TransactionEvent {
 }

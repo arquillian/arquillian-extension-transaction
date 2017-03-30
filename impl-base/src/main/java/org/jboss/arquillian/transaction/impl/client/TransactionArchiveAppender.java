@@ -44,59 +44,55 @@ import static org.jboss.arquillian.transaction.impl.configuration.TransactionCon
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionArchiveAppender implements AuxiliaryArchiveAppender
-{
+public class TransactionArchiveAppender implements AuxiliaryArchiveAppender {
 
-   /**
-    * Represents the extension configuration.
-    */
-   @Inject
-   private Instance<TransactionConfiguration> configurationInstance;
+    /**
+     * Represents the extension configuration.
+     */
+    @Inject
+    private Instance<TransactionConfiguration> configurationInstance;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Archive<?> createAuxiliaryArchive()
-   {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Archive<?> createAuxiliaryArchive() {
 
-      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction.jar");
+        final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-transaction.jar");
 
-      bundleApi(archive);
-      bundleImplementation(archive);
-      bundleSpi(archive);
+        bundleApi(archive);
+        bundleImplementation(archive);
+        bundleSpi(archive);
 
-      addExtensionProperties(archive);
+        addExtensionProperties(archive);
 
-      archive.addAsServiceProvider(RemoteLoadableExtension.class, TransactionRemoteExtension.class);
+        archive.addAsServiceProvider(RemoteLoadableExtension.class, TransactionRemoteExtension.class);
 
-      return archive;
-   }
+        return archive;
+    }
 
-   private void addExtensionProperties(JavaArchive archive) {
-      archive.addAsResource(new StringAsset(exportToProperties(configurationInstance.get())), "arquillian-transaction-configuration.properties");
-   }
+    private void addExtensionProperties(JavaArchive archive) {
+        archive.addAsResource(new StringAsset(exportToProperties(configurationInstance.get())),
+            "arquillian-transaction-configuration.properties");
+    }
 
-   private void bundleImplementation(JavaArchive archive)
-   {
-      archive.addPackage(TransactionRemoteExtension.class.getPackage());
-      archive.addPackage(TransactionConfiguration.class.getPackage());
-      archive.addPackage(TransactionContextImpl.class.getPackage());
-      archive.addPackage(TransactionHandler.class.getPackage());
-      archive.addPackage(DefaultTransactionalTest.class.getPackage());
-   }
+    private void bundleImplementation(JavaArchive archive) {
+        archive.addPackage(TransactionRemoteExtension.class.getPackage());
+        archive.addPackage(TransactionConfiguration.class.getPackage());
+        archive.addPackage(TransactionContextImpl.class.getPackage());
+        archive.addPackage(TransactionHandler.class.getPackage());
+        archive.addPackage(DefaultTransactionalTest.class.getPackage());
+    }
 
-   private void bundleSpi(JavaArchive archive)
-   {
-      archive.addPackage(TransactionScope.class.getPackage());
-      archive.addPackage(TransactionContext.class.getPackage());
-      archive.addPackage(BeforeTransactionStarted.class.getPackage());
-      archive.addPackage(TransactionProvider.class.getPackage());
-      archive.addPackage(TransactionalTest.class.getPackage());
-   }
+    private void bundleSpi(JavaArchive archive) {
+        archive.addPackage(TransactionScope.class.getPackage());
+        archive.addPackage(TransactionContext.class.getPackage());
+        archive.addPackage(BeforeTransactionStarted.class.getPackage());
+        archive.addPackage(TransactionProvider.class.getPackage());
+        archive.addPackage(TransactionalTest.class.getPackage());
+    }
 
-   private void bundleApi(JavaArchive archive)
-   {
-      archive.addPackage(Transactional.class.getPackage());
-   }
+    private void bundleApi(JavaArchive archive) {
+        archive.addPackage(Transactional.class.getPackage());
+    }
 }

@@ -22,38 +22,37 @@ package org.jboss.arquillian.transaction.impl.lifecycle;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionProviderNotFoundException extends RuntimeException
-{
+public class TransactionProviderNotFoundException extends RuntimeException {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   /**
-    * Creates new instance of {@link TransactionProviderNotFoundException} exception.
-    */
-   public TransactionProviderNotFoundException()
-   {
-      // empty constructor
-   }
+    /**
+     * Creates new instance of {@link TransactionProviderNotFoundException} exception.
+     */
+    public TransactionProviderNotFoundException() {
+        // empty constructor
+    }
 
-   /**
-    * Creates new instance of {@link TransactionProviderNotFoundException} exception with detailed error message.
-    *
-    * @param message the detailed error message
-    */
-   public TransactionProviderNotFoundException(String message)
-   {
-      super(message);
-   }
+    /**
+     * Creates new instance of {@link TransactionProviderNotFoundException} exception with detailed error message.
+     *
+     * @param message
+     *     the detailed error message
+     */
+    public TransactionProviderNotFoundException(String message) {
+        super(message);
+    }
 
-   /**
-    * Creates new instance of {@link TransactionProviderNotFoundException} exception with detailed error message and
-    * inner cause.
-    *
-    * @param message the detailed error message
-    * @param cause   the inner cause
-    */
-   public TransactionProviderNotFoundException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
+    /**
+     * Creates new instance of {@link TransactionProviderNotFoundException} exception with detailed error message and
+     * inner cause.
+     *
+     * @param message
+     *     the detailed error message
+     * @param cause
+     *     the inner cause
+     */
+    public TransactionProviderNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

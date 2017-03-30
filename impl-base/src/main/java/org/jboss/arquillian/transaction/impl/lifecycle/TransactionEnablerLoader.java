@@ -25,28 +25,22 @@ import java.util.List;
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class TransactionEnablerLoader
-{
+public class TransactionEnablerLoader {
 
-   private final ServiceLoader serviceLoader;
+    private final ServiceLoader serviceLoader;
 
-   public TransactionEnablerLoader(ServiceLoader serviceLoader)
-   {
-      this.serviceLoader = serviceLoader;
-   }
+    public TransactionEnablerLoader(ServiceLoader serviceLoader) {
+        this.serviceLoader = serviceLoader;
+    }
 
-   /**
-    * Finds custom implementations of {@link TransactionEnabler} SPI
-    * including the default one which will be first on the list.
-    *
-    * @return
-    */
-   public List<TransactionEnabler> getTransactionEnablers()
-   {
-      List<TransactionEnabler> transactionEnablers = new ArrayList<TransactionEnabler>();
-      transactionEnablers.add(new AnnotationBasedTransactionEnabler());
-      transactionEnablers.addAll(serviceLoader.all(TransactionEnabler.class));
-      return transactionEnablers;
-   }
-
+    /**
+     * Finds custom implementations of {@link TransactionEnabler} SPI
+     * including the default one which will be first on the list.
+     */
+    public List<TransactionEnabler> getTransactionEnablers() {
+        List<TransactionEnabler> transactionEnablers = new ArrayList<TransactionEnabler>();
+        transactionEnablers.add(new AnnotationBasedTransactionEnabler());
+        transactionEnablers.addAll(serviceLoader.all(TransactionEnabler.class));
+        return transactionEnablers;
+    }
 }

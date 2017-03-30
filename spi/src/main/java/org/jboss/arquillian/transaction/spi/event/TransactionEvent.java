@@ -24,6 +24,5 @@ import org.jboss.arquillian.core.spi.event.Event;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionEvent implements Event
-{
+public class TransactionEvent implements Event {
 }

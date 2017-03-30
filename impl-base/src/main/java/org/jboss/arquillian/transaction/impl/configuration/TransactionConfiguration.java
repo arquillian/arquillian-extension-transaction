@@ -26,37 +26,31 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class TransactionConfiguration
-{
+public class TransactionConfiguration {
 
-   /**
-    * Represents the name of the manager which should be used for handling the transactions.
-    */
-   private String manager;
+    /**
+     * Represents the name of the manager which should be used for handling the transactions.
+     */
+    private String manager;
 
-   /**
-    * Default mode used (COMMIT) for tests if not specified otherwise using annotation.
-    */
-   private TransactionMode transactionDefaultMode = TransactionMode.COMMIT;
+    /**
+     * Default mode used (COMMIT) for tests if not specified otherwise using annotation.
+     */
+    private TransactionMode transactionDefaultMode = TransactionMode.COMMIT;
 
-   public String getManager()
-   {
-      return manager;
-   }
+    public String getManager() {
+        return manager;
+    }
 
-   public void setManager(String manager)
-   {
-      this.manager = manager;
-   }
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
 
-   public TransactionMode getTransactionDefaultMode()
-   {
-      return transactionDefaultMode;
-   }
+    public TransactionMode getTransactionDefaultMode() {
+        return transactionDefaultMode;
+    }
 
-   public void setTransactionDefaultMode(TransactionMode transactionDefaultMode)
-   {
-      this.transactionDefaultMode = transactionDefaultMode;
-   }
-
+    public void setTransactionDefaultMode(TransactionMode transactionDefaultMode) {
+        this.transactionDefaultMode = transactionDefaultMode;
+    }
 }

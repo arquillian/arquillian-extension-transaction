@@ -20,13 +20,10 @@ package org.jboss.arquillian.transaction.impl.container;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 
-public class InContainerTransactionHandler extends TransactionHandler
-{
+public class InContainerTransactionHandler extends TransactionHandler {
 
-   @Override
-   public boolean isTransactionSupported(TestEvent testEvent)
-   {
-      return true;
-   }
-
+    @Override
+    public boolean isTransactionSupported(TestEvent testEvent) {
+        return true;
+    }
 }

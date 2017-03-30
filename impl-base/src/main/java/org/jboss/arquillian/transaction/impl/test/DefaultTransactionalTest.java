@@ -24,34 +24,32 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class DefaultTransactionalTest implements TransactionalTest
-{
+public class DefaultTransactionalTest implements TransactionalTest {
 
-   /**
-    * Represents the name of the manager.
-    */
-   private String manager;
+    /**
+     * Represents the name of the manager.
+     */
+    private String manager;
 
-   /**
-    * Creates new instance of {@link DefaultTransactionalTest} class.
-    *
-    * @param manager the manger
-    */
-   public DefaultTransactionalTest(String manager)
-   {
+    /**
+     * Creates new instance of {@link DefaultTransactionalTest} class.
+     *
+     * @param manager
+     *     the manger
+     */
+    public DefaultTransactionalTest(String manager) {
 
-      this.manager = manager;
-   }
+        this.manager = manager;
+    }
 
-   /**
-    * Retrieves the manager
-    *
-    * @return the manager
-    */
-   @Override
-   public String getManager()
-   {
+    /**
+     * Retrieves the manager
+     *
+     * @return the manager
+     */
+    @Override
+    public String getManager() {
 
-      return manager;
-   }
+        return manager;
+    }
 }

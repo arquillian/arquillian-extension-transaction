@@ -26,46 +26,41 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionProviderNotFoundExceptionTestCase
-{
+public class TransactionProviderNotFoundExceptionTestCase {
 
-   private static final String MESSAGE = "MESSAGE";
+    private static final String MESSAGE = "MESSAGE";
 
-   private static final Throwable CAUSE = new Throwable();
+    private static final Throwable CAUSE = new Throwable();
 
-   private TransactionProviderNotFoundException instance;
+    private TransactionProviderNotFoundException instance;
 
-   @Test
-   public void shouldExtendRuntimeException()
-   {
+    @Test
+    public void shouldExtendRuntimeException() {
 
-      assertEquals("Class does not extend the proper base class.", RuntimeException.class,
+        assertEquals("Class does not extend the proper base class.", RuntimeException.class,
             TransactionProviderNotFoundException.class.getSuperclass());
-   }
+    }
 
-   @Test
-   public void shouldCreateExceptionInstance()
-   {
+    @Test
+    public void shouldCreateExceptionInstance() {
 
-      instance = new TransactionProviderNotFoundException();
-   }
+        instance = new TransactionProviderNotFoundException();
+    }
 
-   @Test
-   public void shouldCreateExceptionInstanceWithDetailedErrorMessage()
-   {
+    @Test
+    public void shouldCreateExceptionInstanceWithDetailedErrorMessage() {
 
-      instance = new TransactionProviderNotFoundException(MESSAGE);
+        instance = new TransactionProviderNotFoundException(MESSAGE);
 
-      assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
-   }
+        assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
+    }
 
-   @Test
-   public void shouldCreateExceptionInstanceWithDetailedErrorMessageAndInnerCause()
-   {
+    @Test
+    public void shouldCreateExceptionInstanceWithDetailedErrorMessageAndInnerCause() {
 
-      instance = new TransactionProviderNotFoundException(MESSAGE, CAUSE);
+        instance = new TransactionProviderNotFoundException(MESSAGE, CAUSE);
 
-      assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
-      assertEquals("The exception has invalid inner cause.", CAUSE, instance.getCause());
-   }
+        assertEquals("The exception has invalid error message.", MESSAGE, instance.getMessage());
+        assertEquals("The exception has invalid inner cause.", CAUSE, instance.getCause());
+    }
 }

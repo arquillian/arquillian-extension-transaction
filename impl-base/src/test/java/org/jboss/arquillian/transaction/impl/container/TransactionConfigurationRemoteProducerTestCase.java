@@ -29,28 +29,25 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class TransactionConfigurationRemoteProducerTestCase extends AbstractTestTestBase
-{
+public class TransactionConfigurationRemoteProducerTestCase extends AbstractTestTestBase {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(TransactionConfigurationRemoteProducer.class);
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(TransactionConfigurationRemoteProducer.class);
+    }
 
-   @Test
-   public void shouldCreateConfiguration()
-   {
+    @Test
+    public void shouldCreateConfiguration() {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
-      getManager().fire(new BeforeSuite());
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().fire(new BeforeSuite());
 
-      TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
-      assertEquals("Invalid transaction manager name.", "testManagerName", transactionConfiguration.getManager());
+        TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
+        assertEquals("Invalid transaction manager name.", "testManagerName", transactionConfiguration.getManager());
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 }

@@ -31,7 +31,9 @@ public class TransactionProviderProducer {
      * Retrieves the {@link TransactionProvider} registered in current context.
      *
      * @return the transaction provider
-     * @throws TransactionProviderNotFoundException if no provider could be found or there are multiple providers registered.
+     *
+     * @throws TransactionProviderNotFoundException
+     *     if no provider could be found or there are multiple providers registered.
      */
 
     public void registerTransactionProvider(@Observes(precedence = 100) Before beforeTest) {
@@ -39,9 +41,11 @@ public class TransactionProviderProducer {
             return;
         }
         try {
-            final TransactionProvider transactionProvider = serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
+            final TransactionProvider transactionProvider =
+                serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
             if (transactionProvider == null) {
-                throw new TransactionProviderNotFoundException("Transaction provider for given test case has not been found.");
+                throw new TransactionProviderNotFoundException(
+                    "Transaction provider for given test case has not been found.");
             }
             transactionProviderProducer.set(transactionProvider);
         } catch (IllegalStateException e) {

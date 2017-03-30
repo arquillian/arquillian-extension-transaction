@@ -41,35 +41,33 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionConfigurationProducerTestCase extends AbstractTestTestBase
-{
-   private ArquillianDescriptor descriptor;
+public class TransactionConfigurationProducerTestCase extends AbstractTestTestBase {
+    private ArquillianDescriptor descriptor;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(TransactionConfigurationProducer.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(TransactionConfigurationProducer.class);
+    }
 
-   @Before
-   public void load_arquillian_configuration() throws Exception
-   {
+    @Before
+    public void load_arquillian_configuration() throws Exception {
 
-      descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+        descriptor = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
             new FileInputStream(new File("src/test/resources", "arquillian.xml")));
-   }
+    }
 
-   @Test
-   public void shouldCreateConfiguration()
-   {
+    @Test
+    public void shouldCreateConfiguration() {
 
-      getManager().getContext(ClassContext.class).activate(TestClass.class);
-      getManager().bindAndFire(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
+        getManager().bindAndFire(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
-      TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
-      assertEquals("Wrongly mapped transaction manager name.", "testManagerName", transactionConfiguration.getManager());
-      assertEquals("Wrongly mapped transaction default mode.", TransactionMode.DISABLED, transactionConfiguration.getTransactionDefaultMode());
+        TransactionConfiguration transactionConfiguration = getManager().resolve(TransactionConfiguration.class);
+        assertEquals("Wrongly mapped transaction manager name.", "testManagerName",
+            transactionConfiguration.getManager());
+        assertEquals("Wrongly mapped transaction default mode.", TransactionMode.DISABLED,
+            transactionConfiguration.getTransactionDefaultMode());
 
-      getManager().getContext(ClassContext.class).deactivate();
-   }
+        getManager().getContext(ClassContext.class).deactivate();
+    }
 }

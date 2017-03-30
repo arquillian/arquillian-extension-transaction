@@ -25,16 +25,14 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class JtaTransactionExtension implements LoadableExtension
-{
+public class JtaTransactionExtension implements LoadableExtension {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void register(ExtensionBuilder builder) {
 
-      builder.service(AuxiliaryArchiveAppender.class, JtaTransactionArchiveAppender.class);
-   }
+        builder.service(AuxiliaryArchiveAppender.class, JtaTransactionArchiveAppender.class);
+    }
 }

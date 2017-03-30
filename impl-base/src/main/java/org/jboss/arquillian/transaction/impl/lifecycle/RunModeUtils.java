@@ -30,56 +30,42 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-final class RunModeUtils
-{
-   private RunModeUtils()
-   {
-   }
+final class RunModeUtils {
+    private RunModeUtils() {
+    }
 
-   /**
-    * Check is this should run as client.
-    * <p/>
-    * Verify @Deployment.testable vs @RunAsClient on Class or Method level
-    *
-    * @param deployment
-    * @param testClass
-    * @param testMethod
-    * @return
-    */
-   public static boolean isRunAsClient(Deployment deployment, Class<?> testClass, Method testMethod)
-   {
-      boolean runAsClient = true;
-      if (deployment != null)
-      {
-         runAsClient = !deployment.getDescription().testable();
-         runAsClient = !deployment.isDeployed() || runAsClient;
+    /**
+     * Check is this should run as client.
+     * <p/>
+     * Verify @Deployment.testable vs @RunAsClient on Class or Method level
+     */
+    public static boolean isRunAsClient(Deployment deployment, Class<?> testClass, Method testMethod) {
+        boolean runAsClient = true;
+        if (deployment != null) {
+            runAsClient = !deployment.getDescription().testable();
+            runAsClient = !deployment.isDeployed() || runAsClient;
 
-         if (testMethod.isAnnotationPresent(RunAsClient.class))
-         {
-            runAsClient = true;
-         } else if (testClass.isAnnotationPresent(RunAsClient.class))
-         {
-            runAsClient = true;
-         }
-      }
-      return runAsClient;
-   }
+            if (testMethod.isAnnotationPresent(RunAsClient.class)) {
+                runAsClient = true;
+            } else if (testClass.isAnnotationPresent(RunAsClient.class)) {
+                runAsClient = true;
+            }
+        }
+        return runAsClient;
+    }
 
-   /**
-    * Check if this Container DEFAULTs to the Local protocol.
-    * <p/>
-    * Hack to get around ARQ-391
-    *
-    * @param container
-    * @return true if DeployableContianer.getDefaultProtocol == Local
-    */
-   public static boolean isLocalContainer(Container container)
-   {
-      if (container == null || container.getDeployableContainer() == null
-            || container.getDeployableContainer().getDefaultProtocol() == null)
-      {
-         return false;
-      }
-      return "Local".equals(container.getDeployableContainer().getDefaultProtocol().getName());
-   }
+    /**
+     * Check if this Container DEFAULTs to the Local protocol.
+     * <p/>
+     * Hack to get around ARQ-391
+     *
+     * @return true if DeployableContianer.getDefaultProtocol == Local
+     */
+    public static boolean isLocalContainer(Container container) {
+        if (container == null || container.getDeployableContainer() == null
+            || container.getDeployableContainer().getDefaultProtocol() == null) {
+            return false;
+        }
+        return "Local".equals(container.getDeployableContainer().getDefaultProtocol().getName());
+    }
 }

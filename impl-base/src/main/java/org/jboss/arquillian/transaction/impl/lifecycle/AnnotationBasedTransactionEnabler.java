@@ -30,31 +30,25 @@ import org.jboss.arquillian.transaction.spi.provider.TransactionEnabler;
  * @see Transactional
  * @see TransactionEnabler
  */
-public class AnnotationBasedTransactionEnabler implements TransactionEnabler
-{
+public class AnnotationBasedTransactionEnabler implements TransactionEnabler {
 
-   @Override
-   public boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestClass().isAnnotationPresent(Transactional.class);
-   }
+    @Override
+    public boolean isTransactionHandlingDefinedOnClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().isAnnotationPresent(Transactional.class);
+    }
 
-   @Override
-   public boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestMethod().isAnnotationPresent(Transactional.class);
-   }
+    @Override
+    public boolean isTransactionHandlingDefinedOnMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().isAnnotationPresent(Transactional.class);
+    }
 
-   @Override
-   public TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestClass().getAnnotation(Transactional.class).value();
-   }
+    @Override
+    public TransactionMode getTransactionModeFromClassLevel(TestEvent testEvent) {
+        return testEvent.getTestClass().getAnnotation(Transactional.class).value();
+    }
 
-   @Override
-   public TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent)
-   {
-      return testEvent.getTestMethod().getAnnotation(Transactional.class).value();
-   }
-
+    @Override
+    public TransactionMode getTransactionModeFromMethodLevel(TestEvent testEvent) {
+        return testEvent.getTestMethod().getAnnotation(Transactional.class).value();
+    }
 }

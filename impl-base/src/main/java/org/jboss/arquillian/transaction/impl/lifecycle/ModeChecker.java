@@ -14,7 +14,8 @@ public class ModeChecker {
     }
 
     public boolean isClientMode(TestEvent testEvent) {
-        boolean runAsClient = RunModeUtils.isRunAsClient(deployment, testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
+        boolean runAsClient =
+            RunModeUtils.isRunAsClient(deployment, testEvent.getTestClass().getJavaClass(), testEvent.getTestMethod());
         boolean isLocal = RunModeUtils.isLocalContainer(container);
         return runAsClient || isLocal;
     }

@@ -28,16 +28,14 @@ import org.jboss.arquillian.transaction.impl.lifecycle.TransactionProviderProduc
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionExtension implements LoadableExtension
-{
+public class TransactionExtension implements LoadableExtension {
 
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.context(TransactionContextImpl.class);
-      builder.observer(TransactionConfigurationProducer.class);
-      builder.observer(TransactionProviderProducer.class);
-      builder.observer(ClientSideTransactionHandler.class);
-      builder.service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
-   }
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.context(TransactionContextImpl.class);
+        builder.observer(TransactionConfigurationProducer.class);
+        builder.observer(TransactionProviderProducer.class);
+        builder.observer(ClientSideTransactionHandler.class);
+        builder.service(AuxiliaryArchiveAppender.class, TransactionArchiveAppender.class);
+    }
 }

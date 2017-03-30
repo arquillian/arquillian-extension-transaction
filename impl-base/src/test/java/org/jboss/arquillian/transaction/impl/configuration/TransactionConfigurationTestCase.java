@@ -31,43 +31,39 @@ import static org.junit.Assert.assertNull;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionConfigurationTestCase
-{
+public class TransactionConfigurationTestCase {
 
-   /**
-    * Represents the instance of tested class.
-    */
-   private TransactionConfiguration instance;
+    /**
+     * Represents the instance of tested class.
+     */
+    private TransactionConfiguration instance;
 
-   /**
-    * Sets up the test environment.
-    */
-   @Before
-   public void setUp()
-   {
+    /**
+     * Sets up the test environment.
+     */
+    @Before
+    public void setUp() {
 
-      instance = new TransactionConfiguration();
-   }
+        instance = new TransactionConfiguration();
+    }
 
-   /**
-    * Tests {@link DefaultTransactionalTest#getManager()} method.</p>
-    */
-   @Test
-   public void shouldReturnManager()
-   {
+    /**
+     * Tests {@link DefaultTransactionalTest#getManager()} method.</p>
+     */
+    @Test
+    public void shouldReturnManager() {
 
-      String manager = "manager";
+        String manager = "manager";
 
-      assertNull("Invalid property default value.", instance.getManager());
+        assertNull("Invalid property default value.", instance.getManager());
 
-      instance.setManager(manager);
+        instance.setManager(manager);
 
-      assertEquals("Invalid property value.", manager, instance.getManager());
-   }
+        assertEquals("Invalid property value.", manager, instance.getManager());
+    }
 
-   @Test
-   public void shouldHaveDefaultTransactionModeSetToCommitIfNotSpecifiedOtherwise()
-   {
-      assertEquals("Expecting COMMIT value.", TransactionMode.COMMIT, instance.getTransactionDefaultMode());
-   }
+    @Test
+    public void shouldHaveDefaultTransactionModeSetToCommitIfNotSpecifiedOtherwise() {
+        assertEquals("Expecting COMMIT value.", TransactionMode.COMMIT, instance.getTransactionDefaultMode());
+    }
 }

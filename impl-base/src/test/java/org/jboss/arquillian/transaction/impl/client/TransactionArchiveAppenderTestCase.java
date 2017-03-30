@@ -55,64 +55,61 @@ import static org.junit.Assert.assertTrue;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionArchiveAppenderTestCase extends AbstractTestTestBase
-{
+public class TransactionArchiveAppenderTestCase extends AbstractTestTestBase {
 
-   private TransactionArchiveAppender instance;
-   private TransactionConfiguration transactionConfiguration;
+    private TransactionArchiveAppender instance;
+    private TransactionConfiguration transactionConfiguration;
 
-   private final static List<Class<?>> REQUIRED_CLASSES = Arrays.asList(
-         TransactionRemoteExtension.class, TransactionContextImpl.class, TransactionHandler.class,
-         TransactionProviderNotFoundException.class, DefaultTransactionalTest.class, Transactional.class,
-         TransactionMode.class, TransactionScope.class, TransactionContext.class,
-         AfterTransactionEnded.class, AfterTransactionStarted.class, BeforeTransactionEnded.class,
-         BeforeTransactionStarted.class, TransactionProvider.class, TransactionalTest.class,
-         TransactionConfiguration.class, TransactionConfigurationConverter.class,
-         TransactionConfigurationRemoteProducer.class);
+    private final static List<Class<?>> REQUIRED_CLASSES = Arrays.asList(
+        TransactionRemoteExtension.class, TransactionContextImpl.class, TransactionHandler.class,
+        TransactionProviderNotFoundException.class, DefaultTransactionalTest.class, Transactional.class,
+        TransactionMode.class, TransactionScope.class, TransactionContext.class,
+        AfterTransactionEnded.class, AfterTransactionStarted.class, BeforeTransactionEnded.class,
+        BeforeTransactionStarted.class, TransactionProvider.class, TransactionalTest.class,
+        TransactionConfiguration.class, TransactionConfigurationConverter.class,
+        TransactionConfigurationRemoteProducer.class);
 
-   @Before
-   public void setUp()
-   {
+    @Before
+    public void setUp() {
 
-      transactionConfiguration = new TransactionConfiguration();
+        transactionConfiguration = new TransactionConfiguration();
 
-      bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
+        bind(ApplicationScoped.class, TransactionConfiguration.class, transactionConfiguration);
 
-      instance = new TransactionArchiveAppender();
-      getManager().inject(instance);
-   }
+        instance = new TransactionArchiveAppender();
+        getManager().inject(instance);
+    }
 
-   @Test
-   public void shouldPackageAllExtensionClasses() throws Exception
-   {
+    @Test
+    public void shouldPackageAllExtensionClasses() throws Exception {
 
-      Archive archive = instance.createAuxiliaryArchive();
+        Archive archive = instance.createAuxiliaryArchive();
 
-      assertNotNull("Method returned null.", archive);
-      assertTrue("The returned archive has incorrect type.", archive instanceof JavaArchive);
+        assertNotNull("Method returned null.", archive);
+        assertTrue("The returned archive has incorrect type.", archive instanceof JavaArchive);
 
-      for (Class c : REQUIRED_CLASSES)
-      {
+        for (Class c : REQUIRED_CLASSES) {
 
-         assertTrue("The required type is missing: " + c.getName(),
-               archive.contains(getClassResourcePath(c)));
-      }
-   }
+            assertTrue("The required type is missing: " + c.getName(),
+                archive.contains(getClassResourcePath(c)));
+        }
+    }
 
-   /**
-    * Retrieves the resource name of the give class.
-    *
-    * @param c the class
-    * @return the resource name for the class
-    */
-   public static ArchivePath getClassResourcePath(Class c)
-   {
+    /**
+     * Retrieves the resource name of the give class.
+     *
+     * @param c
+     *     the class
+     *
+     * @return the resource name for the class
+     */
+    public static ArchivePath getClassResourcePath(Class c) {
 
-      StringBuilder sb = new StringBuilder();
-      sb.append("/");
-      sb.append(c.getName().replace(".", "/"));
-      sb.append(".class");
+        StringBuilder sb = new StringBuilder();
+        sb.append("/");
+        sb.append(c.getName().replace(".", "/"));
+        sb.append(".class");
 
-      return ArchivePaths.create(sb.toString());
-   }
+        return ArchivePaths.create(sb.toString());
+    }
 }

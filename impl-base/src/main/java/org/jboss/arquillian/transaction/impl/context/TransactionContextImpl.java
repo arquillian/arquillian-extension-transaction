@@ -30,47 +30,42 @@ import java.lang.annotation.Annotation;
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class TransactionContextImpl extends AbstractContext<String> implements TransactionContext
-{
+public class TransactionContextImpl extends AbstractContext<String> implements TransactionContext {
 
-   /**
-    * Represents the name used as the id for this context.
-    */
-   private static final String TRANSACTION_CONTEXT_ID = "transaction";
+    /**
+     * Represents the name used as the id for this context.
+     */
+    private static final String TRANSACTION_CONTEXT_ID = "transaction";
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return TransactionScope.class;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return TransactionScope.class;
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void activate()
-   {
-      super.activate(TRANSACTION_CONTEXT_ID);
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void activate() {
+        super.activate(TRANSACTION_CONTEXT_ID);
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void destroy()
-   {
-      super.destroy(TRANSACTION_CONTEXT_ID);
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        super.destroy(TRANSACTION_CONTEXT_ID);
+    }
 }
