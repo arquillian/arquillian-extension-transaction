@@ -206,6 +206,28 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
     }
 
     @Test
+    public void shouldNotStartTransactionWhenNoTransactionProividerIsFound() throws Exception {
+
+        when(mockServiceLoader.onlyOne(TransactionProvider.class)).thenReturn(null);
+
+        getManager().getContext(ClassContext.class).activate(TestClass.class);
+
+        Object instance = new TestClass();
+        Method testMethod = instance.getClass().getMethod("defaultTest");
+
+        getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
+
+        // checks if the transaction context hasn't been created
+        verifyZeroInteractions(mockTransactionContext);
+
+        // verifies that the transaction hasn't been started
+        verifyZeroInteractions(mockTransactionProvider);
+
+        getManager().getContext(ClassContext.class).deactivate();
+    }
+
+
+    @Test
     public void shouldRollbackTransaction() throws Exception {
 
         getManager().getContext(ClassContext.class).activate(TestClass.class);

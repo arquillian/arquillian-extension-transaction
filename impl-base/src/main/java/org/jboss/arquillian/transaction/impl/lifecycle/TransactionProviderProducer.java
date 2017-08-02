@@ -44,8 +44,7 @@ public class TransactionProviderProducer {
             final TransactionProvider transactionProvider =
                 serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
             if (transactionProvider == null) {
-                throw new TransactionProviderNotFoundException(
-                    "Transaction provider for given test case has not been found.");
+                return;
             }
             transactionProviderProducer.set(transactionProvider);
         } catch (IllegalStateException e) {
