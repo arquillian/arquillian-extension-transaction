@@ -29,6 +29,7 @@ import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 public class ClientSideTransactionHandler extends TransactionHandler {
+    
     @Inject
     private Instance<Deployment> deploymentInstance;
 
@@ -47,7 +48,7 @@ public class ClientSideTransactionHandler extends TransactionHandler {
 
         final TransactionProvider transactionProvider =
                 serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
-        if(transactionProvider == null) {
+        if (transactionProvider == null) {
             return false;
         }
 
