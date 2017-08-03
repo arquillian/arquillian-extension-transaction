@@ -42,7 +42,6 @@ public class ClientSideTransactionHandler extends TransactionHandler {
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
 
-
     @Override
     public boolean isTransactionSupported(TestEvent testEvent) {
 
