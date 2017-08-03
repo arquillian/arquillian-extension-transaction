@@ -21,12 +21,15 @@ import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 import org.jboss.arquillian.transaction.impl.lifecycle.ModeChecker;
 import org.jboss.arquillian.transaction.impl.lifecycle.TransactionHandler;
+import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 public class ClientSideTransactionHandler extends TransactionHandler {
+    
     @Inject
     private Instance<Deployment> deploymentInstance;
 
@@ -36,8 +39,18 @@ public class ClientSideTransactionHandler extends TransactionHandler {
     @Inject
     private Instance<ApplicationContext> applicationContextInstance;
 
+    @Inject
+    private Instance<ServiceLoader> serviceLoaderInstance;
+
     @Override
     public boolean isTransactionSupported(TestEvent testEvent) {
+
+        final TransactionProvider transactionProvider =
+                serviceLoaderInstance.get().onlyOne(TransactionProvider.class);
+        if (transactionProvider == null) {
+            return false;
+        }
+
         return new ModeChecker(deploymentInstance.get(), containerInstance.get()).isClientMode(testEvent);
     }
 }
