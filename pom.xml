@@ -26,7 +26,7 @@
   </licenses>
 
   <properties>
-    <version.arquillian_core>1.1.13.Final</version.arquillian_core>
+    <version.arquillian_core>1.5.0.Final</version.arquillian_core>
 
     <version.junit>4.12</version.junit>
     <version.fest.assert>1.4</version.fest.assert>
