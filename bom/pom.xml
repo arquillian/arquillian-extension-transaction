@@ -69,6 +69,12 @@
         <artifactId>arquillian-transaction-jta</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-transaction-jta</artifactId>
+        <version>${project.version}</version>
+        <classifier>jakarta</classifier>
+      </dependency>      
     </dependencies>
   </dependencyManagement>
 
