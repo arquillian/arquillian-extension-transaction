@@ -235,7 +235,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("rollbackTest");
 
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
@@ -256,7 +256,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("failTest");
 
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
+        bind(TestScoped.class, TestResult.class, TestResult.failed(null));
 
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
@@ -277,7 +277,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("commitTest");
 
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
@@ -298,7 +298,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("defaultTest");
 
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
@@ -314,7 +314,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
     @Test
     public void shouldActivateTransactionWhenRunAsClient() throws Exception {
         when(mockDeploymentDescriptor.testable()).thenReturn(false);
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("commitTest");
@@ -327,7 +327,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
     @Test
     public void shouldActivateTransactionWhenLocalProtocol() throws Exception {
         when(mockDeploymentDescriptor.testable()).thenReturn(true);
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         Container container = Mockito.mock(Container.class);
         DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
@@ -346,7 +346,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
     @Test
     public void shouldActivateTransactionWhenRunAsClientAndLocalProtocol() throws Exception {
         when(mockDeploymentDescriptor.testable()).thenReturn(false);
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         Container container = Mockito.mock(Container.class);
         DeployableContainer deployableContainer = Mockito.mock(DeployableContainer.class);
@@ -365,7 +365,7 @@ public class ClientSideTransactionHandlerTestCase extends AbstractTestTestBase {
     @Test
     public void shouldNotActivateTransactionWhenNotRunAsClientOnClientSide() throws Exception {
         when(mockDeploymentDescriptor.testable()).thenReturn(true);
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
 
         Object instance = new TestClass();
         Method testMethod = instance.getClass().getMethod("commitTest");
