@@ -130,7 +130,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -147,7 +147,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -163,7 +163,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.FAILED));
+        bind(TestScoped.class, TestResult.class, TestResult.failed(null));
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -182,7 +182,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -198,7 +198,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -214,7 +214,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -232,7 +232,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -248,7 +248,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
@@ -263,7 +263,7 @@ public class InContainerTransactionHandlerWithCustomEnablerTestCase extends Abst
 
         // when
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.Before(instance, testMethod));
-        bind(TestScoped.class, TestResult.class, new TestResult(TestResult.Status.PASSED));
+        bind(TestScoped.class, TestResult.class, TestResult.passed());
         getManager().fire(new org.jboss.arquillian.test.spi.event.suite.After(instance, testMethod));
 
         // then
