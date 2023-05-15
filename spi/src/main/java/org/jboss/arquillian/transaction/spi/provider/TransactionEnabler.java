@@ -26,8 +26,9 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
  * <br />
  * This mechanism is intended to handle multiple implementations.
  * It's realized through the chain call, however order is not guaranteed.
- * It will always use the default one {@see org.jboss.arquillian.transaction.impl.lifecycle.AnnotationBasedTransactionEnabler}
- * as the precedent.
+ * It will always use the default one.
+ * See {@code org.jboss.arquillian.transaction.impl.lifecycle.AnnotationBasedTransactionEnabler}
+ * in {@code arquillian-extension-transaction/impl-base} as the precedent.
  * <br />
  *
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
