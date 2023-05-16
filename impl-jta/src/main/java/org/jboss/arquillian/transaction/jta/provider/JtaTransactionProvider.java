@@ -26,9 +26,9 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
 
 public class JtaTransactionProvider implements TransactionProvider {
 
