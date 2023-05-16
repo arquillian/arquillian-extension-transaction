@@ -30,8 +30,6 @@ public class TransactionProviderProducer {
     /**
      * Retrieves the {@link TransactionProvider} registered in current context.
      *
-     * @return the transaction provider
-     *
      * @throws TransactionProviderNotFoundException
      *     if no provider could be found or there are multiple providers registered.
      */
