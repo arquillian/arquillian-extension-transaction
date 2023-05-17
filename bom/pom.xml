@@ -4,7 +4,7 @@
 
   <groupId>org.jboss.arquillian.extension</groupId>
   <artifactId>arquillian-transaction-bom</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Transaction Extension: BOM</name>
   <url>http://arquillian.org</url>
