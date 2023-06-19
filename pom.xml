@@ -30,7 +30,7 @@
 
     <version.junit>4.13.2</version.junit>
     <version.fest.assert>1.4</version.fest.assert>
-    <version.mockito>4.9.0</version.mockito>
+    <version.mockito>5.4.0</version.mockito>
     <version.jboss_spec>3.0.2.Final</version.jboss_spec>
     <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
   </properties>
